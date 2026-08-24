@@ -1,45 +1,80 @@
-# Ten minute proof of concept demonstration
+# CertaRig Ten Minute Demonstration Script
 
-## 0:00 to 0:40 Introduction
+Before recording, confirm that the repository is available at https://github.com/shadybrook/certarig-phase-2-poc and replace the video placeholder in the Phase 2 report after upload.
 
-Introduce CertaRig as a system for commissioning and revalidating changed engineering test rigs. State that the Phase 2 proof of concept uses a synthetic pressure and flow rig and has no live hardware control.
+## 0:00 to 0:35 | Introduction
 
-## 0:40 to 1:30 User community
+Hello, I am Chintan Dedhia. This demonstration presents CertaRig, a controlled workflow for commissioning and validating a small pressure and flow rig. Phase 2 established the architecture and browser proof of concept. I have now also started the Phase 3 implementation bridge so the same safety and evidence contract can run on a computer and communicate with a Raspberry Pi.
 
-Describe the three primary groups: test engineers, instrumentation engineers, and project reviewers. Explain that each group needs traceable mappings, explicit uncertainty, and a repeatable evidence record.
+## 0:35 to 1:15 | User Community and Benefits
 
-## 1:30 to 2:15 Benefits
+The main users are commissioning engineers, laboratory technicians, project supervisors, and auditors. CertaRig helps them compare an intended rig model with the actual configuration, identify missing evidence before a run, execute an approved test consistently, and retain a reviewable record. It reduces avoidable wiring, range, calibration, and documentation errors while keeping the operator responsible for physical approval.
 
-Explain the four benefits shown in the interface: less repeated work, visible uncertainty, safe deterministic execution, and an audit ready evidence bundle.
+## 1:15 to 2:10 | Architecture Diagram
 
-## 2:15 to 3:20 Architecture
+The computer is the engineering and review station. It can inspect the current rig snapshot and prepare a typed test proposal. An optional OpenAI planner may help draft that proposal, but it cannot approve it, execute it, call GPIO, or change a safety limit.
 
-Walk through the browser review layer, the discovery and modelling responsibilities, the experiment and diagnosis responsibilities, the versioned evidence store, and the deterministic runtime. Emphasize that the safety policy remains authoritative and separate from AI reasoning.
+The Raspberry Pi hosts a small authenticated edge API. It loads the approved configuration, checks calibration and range evidence, creates a configuration hash, validates the plan deterministically, and waits for a separate operator approval. Only then can the deterministic executor call the hardware adapter. The physical system still requires independent electrical protection, a relief path, an emergency stop, and correctly rated isolated interfaces.
 
-## 3:20 to 4:10 Data flow
+## 2:10 to 2:55 | Data Flow Diagram
 
-Follow the six visible stages from ingest to report. Explain how configuration and calibration evidence becomes a typed rig graph, how versions are compared, how the bounded plan is compiled, and how the final outcome is linked to measured data.
+The data flow begins with configuration and calibration evidence. CertaRig normalizes the values and produces a stable configuration hash. The computer requests a read only snapshot and submits a proposed plan. The edge validator checks the schema, ranges, durations, calibration status, and expected configuration hash. A human operator then approves the exact plan. During execution, the edge service samples the sensors, applies deterministic stop conditions, returns the output to a safe state, and stores the run in SQLite with an evidence checksum.
 
-## 4:10 to 5:10 Case 1: Approved baseline
+## 2:55 to 3:50 | Actual Phase 3 Code
 
-Run the approved baseline. Point out the four mapped channels, high model confidence, zero material findings, telemetry response, completed plan, and evidence checksum.
+The repository now contains more than the browser simulation. The certarig_edge package includes the HTTP API, configuration loader, safety validator, deterministic executor, evidence store, client, optional structured AI planner, and optional MCP review tools. The hardware folder includes a mock adapter for repeatable tests and a Raspberry Pi adapter for GPIO plus an ADS1115 analogue converter. The same executor contract is used for both adapters, which allows software checks to run before any physical output is enabled.
 
-## 5:10 to 6:20 Case 2: Swapped analog channels
+The optional MCP server exposes only snapshot, proposal, and evidence review operations. It intentionally provides no approval, execution, stop, GPIO, shell, or unrestricted network tool.
 
-Select the swapped channel case. Show that the pressure and flow labels conflict with the approved baseline and measured signatures. Explain why the system asks for wiring confirmation instead of accepting the new model.
+## 3:50 to 4:40 | Computer to Raspberry Pi Workflow
 
-## 6:20 to 7:25 Case 3: Missing calibration
+On the Raspberry Pi I copy the example configuration, set a strong operator key, and start the edge service:
 
-Select the missing calibration case. Show the reduced confidence and the blocked plan. Explain that missing material evidence is a stop condition, so no bounded test is started.
+    export CERTARIG_OPERATOR_KEY='replace-with-a-strong-key'
+    python3 -m certarig_edge.cli serve --host 127.0.0.1 --port 8765
 
-## 7:25 to 8:35 Case 4: Pressure safety limit breach
+From a computer I can inspect the rig and exercise the complete API workflow against the safe mock adapter:
 
-Select the safety limit case. Point out the pressure trace crossing 4.2 bar, the safe abort outcome, and the recorded finding. Explain that the deterministic runtime, not an AI decision, owns the abort rule.
+    python3 -m certarig_edge.cli demo --base-url http://raspberrypi.local:8765
+    python3 -m certarig_edge.cli demo --base-url http://raspberrypi.local:8765 --execute
 
-## 8:35 to 9:20 Testing and evidence
+The service binds to localhost by default. Remote use should be limited to a private network, VPN, or authenticated reverse proxy.
 
-Mention that automated tests cover all four cases and that the exported JSON contains the input versions, findings, plan states, telemetry, and evidence checksum. Show the test command and result if time permits.
+## 4:40 to 6:55 | Four Test Cases
 
-## 9:20 to 10:00 Conclusion and Phase 3 readiness
+Case one is the approved baseline. All channels are mapped, the calibration evidence is present, the plan matches the configuration hash, and the simulated run completes. The valve command returns to its normally closed safe state.
 
-Conclude that Phase 2 demonstrates the core reasoning and evidence loop with repeatable cases. State that Phase 3 should add file ingestion, persistent storage, authenticated review, one approved controller adapter, sandboxed code validation, and a low energy hardware testbed with independent safety hardware.
+Case two swaps the pressure and flow channels. The comparison identifies the mapping conflict and prevents execution until the configuration is corrected.
+
+Case three removes required calibration evidence. Validation rejects the plan before approval because a test result would not be defensible without traceable calibration.
+
+Case four introduces a pressure limit breach. The deterministic executor detects the value above the approved 4.2 bar limit, closes the output, records a safe abort, and writes the reason into the evidence record.
+
+These cases demonstrate a deliberate separation: an AI system may help represent intent, but deterministic code decides whether the proposal is valid and the operator decides whether it may run.
+
+## 6:55 to 7:50 | Agent Guardrails
+
+The optional OpenAI integration uses the Responses API with a typed JSON schema. Its output is treated only as an untrusted proposal. The edge service independently checks every submitted field and does not accept an AI approval. The operator key protects state changing API calls, approvals are bound to a plan and configuration hash, and a stale configuration invalidates the run. Evidence is stored after completion or abort so a reviewer can trace what happened.
+
+## 7:50 to 8:40 | Validation Evidence
+
+The browser engine has six automated tests. The new Python stack has eight tests, including stable configuration hashing, calibration rejection, stale configuration rejection, valid plan validation, normal completion, pressure abort, unapproved plan rejection, and a complete localhost HTTP workflow with authentication, approval, execution, and evidence retrieval.
+
+    npm test
+    python3 -m unittest discover -s tests_py -v
+
+All fourteen automated tests pass in the current development environment. This validates the software contracts and the mock path. It does not claim that a physical sensor, actuator, emergency stop, or electrical protection circuit has already been validated.
+
+## 8:40 to 9:30 | Phase 3 Hardware Workflow
+
+Phase 3 proceeds in controlled stages. First, run the mock adapter on the computer and Raspberry Pi. Second, connect sensors in read only mode and compare readings with reference instruments. Third, verify GPIO only into a dummy load through a correctly rated isolated driver. Fourth, perform emergency stop, loss of power, sensor fault, stale configuration, and overpressure tests. Fifth, enable one low energy rig test under supervision. Finally, compare the physical evidence with the simulator regression baseline and document deviations.
+
+The Raspberry Pi GPIO must never drive a relay coil, solenoid, miniature circuit breaker, mains circuit, or industrial load directly. Final wiring and component ratings require competent engineering review.
+
+## 9:30 to 10:00 | Conclusion and Phase 3 Readiness
+
+CertaRig now has a browser proof of concept and a hardware ready reference software stack. The computer to Pi API, adapters, approval boundary, deterministic execution, and evidence storage are implemented and software tested. The next claim must be narrower and evidence based: physical readiness will be established only after calibration, electrical safety, fault injection, and supervised hardware tests are completed. This provides a clear and defensible path from Phase 2 into Phase 3.
+
+## After Recording
+
+Upload the video, confirm that it is viewable, paste the final URL into the Phase 2 report, and verify the GitHub link from a signed out browser.

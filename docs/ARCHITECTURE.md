@@ -19,3 +19,11 @@ The browser interface is the human review layer. It displays the system map, evi
 ## Phase 2 boundary
 
 The proof of concept is browser based and uses synthetic data. It proves the workflow, typed model, policy logic, deterministic test cases, and evidence export. It does not prove live device discovery, controller deployment, physical actuation, or independent hardware protection. Those items remain Phase 3 work.
+
+## Phase 3 reference stack
+
+The engineering computer uses the CertaRig client to read snapshots, create plans, approve reviewed plans, start a supervised run, request a stop, and retrieve evidence. The optional OpenAI planner receives only a read only snapshot and engineering constraints. It emits a strict structured proposal that is submitted to the same deterministic validator as a manually written plan.
+
+The Raspberry Pi edge service owns configuration loading, hardware access, plan validation, approval state, execution, stop behaviour, and evidence persistence. It starts and ends with the output in the safe state. The service works with either `MockHardware` or `RaspberryPiHardware` through the same interface.
+
+The optional MCP server exposes three review tools: read the rig snapshot, propose a reviewable plan, and read a completed evidence bundle. It does not expose approval, execution, stop, GPIO, shell, or arbitrary network tools.
