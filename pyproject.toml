@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "certarig-edge"
+version = "0.3.0"
+description = "Deterministic Raspberry Pi edge service and guarded agent interface for CertaRig"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Chintan Dedhia" }]
+dependencies = []
+
+[project.optional-dependencies]
+pi = [
+  "gpiozero>=2.0.1,<3",
+  "smbus2>=0.4.3,<1",
+]
+agent = [
+  "openai>=1.68,<3",
+  "mcp>=1.9,<2",
+]
+dev = [
+  "pytest>=8.3,<9",
+]
+
+[project.scripts]
+certarig-edge = "certarig_edge.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["certarig_edge*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests_py"]
+addopts = "-q"

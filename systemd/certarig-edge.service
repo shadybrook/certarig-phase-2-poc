@@ -1,0 +1,22 @@
+[Unit]
+Description=CertaRig deterministic edge API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=certarig
+Group=certarig
+WorkingDirectory=/opt/certarig
+EnvironmentFile=/etc/certarig/edge.env
+ExecStart=/opt/certarig/.venv/bin/certarig-edge serve --config /etc/certarig/rig.json --database /var/lib/certarig/evidence.sqlite3 --bind 0.0.0.0 --port 8080
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/certarig
+
+[Install]
+WantedBy=multi-user.target
