@@ -1,8 +1,5 @@
 # CertaRig Phase 2 proof of concept
 
-[![Phase 2 validation](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/phase2-ci.yml/badge.svg)](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/phase2-ci.yml)
-[![Publish Phase 2 PoC](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/pages.yml/badge.svg)](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/pages.yml)
-
 CertaRig is an evidence backed commissioning and revalidation concept for engineering test rigs. The Phase 2 build shows how a reviewer can compare a proposed rig model with an approved baseline, identify missing or conflicting evidence, run a bounded deterministic simulation, and export a traceable result.
 
 ## Submission links
@@ -10,7 +7,7 @@ CertaRig is an evidence backed commissioning and revalidation concept for engine
 | Deliverable | Link or status |
 |---|---|
 | Public repository | https://github.com/shadybrook/certarig-phase-2-poc |
-| Live proof of concept | https://shadybrook.github.io/certarig-phase-2-poc/ |
+| Live proof of concept | Deployment workflow configured; URL activates after the first successful Pages run |
 | Ten minute demonstration | Pending final recording and upload |
 | Submission guide | [Phase 2 submission guide](docs/PHASE2_SUBMISSION.md) |
 
@@ -41,6 +38,7 @@ See:
 2. [Rendered GitHub diagrams](docs/DIAGRAMS.md)
 3. [Test matrix](docs/TEST_MATRIX.md)
 4. [Ten minute demonstration script](docs/DEMO_SCRIPT.md)
+5. [Dated validation record](docs/VALIDATION_RECORD.md)
 
 ## Reproducible validation
 
