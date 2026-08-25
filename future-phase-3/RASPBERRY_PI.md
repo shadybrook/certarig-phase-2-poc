@@ -1,5 +1,7 @@
 # Raspberry Pi integration guide
 
+> Future work only. This document is deliberately separated from the Phase 2 submission.
+
 ## Reference hardware
 
 The provided adapter supports this low voltage reference pattern:

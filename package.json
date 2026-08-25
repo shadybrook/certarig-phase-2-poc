@@ -1,10 +1,13 @@
 {
   "name": "certarig-phase-2-poc",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "build": "node scripts/build-site.mjs",
+    "evidence": "node scripts/generate-evidence.mjs",
+    "test": "node --test",
+    "check": "npm run test && python3 -m unittest discover -s tests_py -v && npm run build && npm run evidence"
   },
   "engines": {
     "node": ">=20"
