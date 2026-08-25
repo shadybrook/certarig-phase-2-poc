@@ -1,5 +1,7 @@
 # Phase 3 workflow and final hardware execution
 
+> Future work only. This document is deliberately separated from the Phase 2 submission.
+
 ## Goal
 
 Phase 3 turns the Phase 2 proof of concept into a supervised commissioning stack that can run on a computer and a Raspberry Pi. The software keeps AI reasoning outside the physical output path. The AI layer may interpret evidence and propose a typed plan. A deterministic edge service validates the plan, requires human approval, enforces limits, records every transition, and owns stop and abort behaviour.

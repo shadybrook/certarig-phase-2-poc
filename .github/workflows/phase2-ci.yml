@@ -1,0 +1,42 @@
+name: Phase 2 validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-poc:
+    name: Browser PoC tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+      - name: Run browser tests
+        run: npm test
+      - name: Build static site
+        run: npm run build
+      - name: Generate reproducible evidence
+        run: npm run evidence
+      - name: Verify committed evidence is current
+        run: git diff --exit-code -- evidence/phase2
+
+  reference-software:
+    name: Reference software tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Run Python standard library tests
+        run: python3 -m unittest discover -s tests_py -v

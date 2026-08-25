@@ -4,7 +4,7 @@ Before recording, confirm that the repository is available at https://github.com
 
 ## 0:00 to 0:35 | Introduction
 
-Hello, I am Chintan Dedhia. This demonstration presents CertaRig, a controlled workflow for commissioning and validating a small pressure and flow rig. Phase 2 established the architecture and browser proof of concept. I have now also started the Phase 3 implementation bridge so the same safety and evidence contract can run on a computer and communicate with a Raspberry Pi.
+Hello, I am Chintan Dedhia. This demonstration presents CertaRig, a controlled workflow for commissioning and validating a small pressure and flow rig. Phase 2 establishes the architecture and browser proof of concept. I have also built a supplementary implementation reference so the same safety and evidence contract can run on a computer and communicate with a Raspberry Pi.
 
 ## 0:35 to 1:15 | User Community and Benefits
 
@@ -20,7 +20,7 @@ The Raspberry Pi hosts a small authenticated edge API. It loads the approved con
 
 The data flow begins with configuration and calibration evidence. CertaRig normalizes the values and produces a stable configuration hash. The computer requests a read only snapshot and submits a proposed plan. The edge validator checks the schema, ranges, durations, calibration status, and expected configuration hash. A human operator then approves the exact plan. During execution, the edge service samples the sensors, applies deterministic stop conditions, returns the output to a safe state, and stores the run in SQLite with an evidence checksum.
 
-## 2:55 to 3:50 | Actual Phase 3 Code
+## 2:55 to 3:50 | Supplementary Implementation Code
 
 The repository now contains more than the browser simulation. The certarig_edge package includes the HTTP API, configuration loader, safety validator, deterministic executor, evidence store, client, optional structured AI planner, and optional MCP review tools. The hardware folder includes a mock adapter for repeatable tests and a Raspberry Pi adapter for GPIO plus an ADS1115 analogue converter. The same executor contract is used for both adapters, which allows software checks to run before any physical output is enabled.
 
@@ -35,8 +35,8 @@ On the Raspberry Pi I copy the example configuration, set a strong operator key,
 
 From a computer I can inspect the rig and exercise the complete API workflow against the safe mock adapter:
 
-    python3 -m certarig_edge.cli demo --base-url http://raspberrypi.local:8765
-    python3 -m certarig_edge.cli demo --base-url http://raspberrypi.local:8765 --execute
+    python3 -m certarig_edge.cli demo --url http://raspberrypi.local:8765
+    python3 -m certarig_edge.cli demo --url http://raspberrypi.local:8765 --execute
 
 The service binds to localhost by default. Remote use should be limited to a private network, VPN, or authenticated reverse proxy.
 
@@ -65,7 +65,7 @@ The browser engine has six automated tests. The new Python stack has eight tests
 
 All fourteen automated tests pass in the current development environment. This validates the software contracts and the mock path. It does not claim that a physical sensor, actuator, emergency stop, or electrical protection circuit has already been validated.
 
-## 8:40 to 9:30 | Phase 3 Hardware Workflow
+## 8:40 to 9:30 | Readiness for Phase 3
 
 Phase 3 proceeds in controlled stages. First, run the mock adapter on the computer and Raspberry Pi. Second, connect sensors in read only mode and compare readings with reference instruments. Third, verify GPIO only into a dummy load through a correctly rated isolated driver. Fourth, perform emergency stop, loss of power, sensor fault, stale configuration, and overpressure tests. Fifth, enable one low energy rig test under supervision. Finally, compare the physical evidence with the simulator regression baseline and document deviations.
 
@@ -73,7 +73,7 @@ The Raspberry Pi GPIO must never drive a relay coil, solenoid, miniature circuit
 
 ## 9:30 to 10:00 | Conclusion and Phase 3 Readiness
 
-CertaRig now has a browser proof of concept and a hardware ready reference software stack. The computer to Pi API, adapters, approval boundary, deterministic execution, and evidence storage are implemented and software tested. The next claim must be narrower and evidence based: physical readiness will be established only after calibration, electrical safety, fault injection, and supervised hardware tests are completed. This provides a clear and defensible path from Phase 2 into Phase 3.
+CertaRig now has a browser proof of concept and a hardware oriented reference software stack. The computer to Pi API, adapters, approval boundary, deterministic execution, and evidence storage are implemented and software tested. The next claim must be narrower and evidence based: physical readiness will be established only after calibration, electrical safety, fault injection, and supervised hardware tests are completed. This provides a clear and defensible path from Phase 2 into Phase 3.
 
 ## After Recording
 

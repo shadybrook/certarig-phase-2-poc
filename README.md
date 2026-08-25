@@ -1,113 +1,93 @@
-# CertaRig Phase 2 PoC and Phase 3 hardware reference stack
+# CertaRig Phase 2 proof of concept
 
-CertaRig is an evidence backed commissioning and revalidation system for engineering test rigs. The repository contains the Phase 2 browser proof of concept and the first Phase 3 hardware ready reference implementation.
+[![Phase 2 validation](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/phase2-ci.yml/badge.svg)](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/phase2-ci.yml)
+[![Publish Phase 2 PoC](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/pages.yml/badge.svg)](https://github.com/shadybrook/certarig-phase-2-poc/actions/workflows/pages.yml)
 
-The Phase 3 code can run in deterministic mock mode on a computer or use configured Raspberry Pi GPIO and ADS1115 inputs. An engineering computer communicates with the Pi through a JSON HTTP API. The optional AI planner may propose a strict typed plan, but it cannot approve a plan, execute a plan, call GPIO, or change a safety limit.
+CertaRig is an evidence backed commissioning and revalidation concept for engineering test rigs. The Phase 2 build shows how a reviewer can compare a proposed rig model with an approved baseline, identify missing or conflicting evidence, run a bounded deterministic simulation, and export a traceable result.
 
-## Demonstrated cases
+## Submission links
 
-1. Approved baseline. All mappings and records agree and the bounded valve response test completes.
-2. Swapped analog channels. The system detects mapping and response signature conflicts and asks for review.
-3. Missing calibration. The system stops before execution because material evidence is missing.
+| Deliverable | Link or status |
+|---|---|
+| Public repository | https://github.com/shadybrook/certarig-phase-2-poc |
+| Live proof of concept | https://shadybrook.github.io/certarig-phase-2-poc/ |
+| Ten minute demonstration | Pending final recording and upload |
+| Submission guide | [Phase 2 submission guide](docs/PHASE2_SUBMISSION.md) |
+
+## Run the proof of concept
+
+Use the public live link above, or run it locally:
+
+    python3 -m http.server 8000
+
+Open http://localhost:8000.
+
+Select a demonstration case, run the analysis, inspect the model, findings, plan, telemetry, and checksum, and export the JSON evidence.
+
+## Four repeatable cases
+
+1. Approved baseline. All mappings and records agree and the bounded simulation completes.
+2. Swapped analog channels. Mapping and response signature conflicts require review.
+3. Missing calibration. Material evidence is absent, so execution is blocked.
 4. Pressure safety limit breach. The deterministic runtime records a safe abort.
 
-## Phase 3 capabilities
+## Architecture and data flow
 
-* Raspberry Pi edge service with an explicit safe state.
-* Computer to Pi JSON HTTP client.
-* Operator authentication and human approval gate.
-* Mock and Raspberry Pi hardware adapters behind one interface.
-* ADS1115 sensor acquisition with engineering unit scaling.
-* Deterministic plan validation, execution, stop, and abort rules.
-* SQLite evidence records with a stable checksum.
-* Optional OpenAI structured plan proposer.
-* Optional MCP review server with read and proposal tools only.
+The browser is the human review layer. The reasoning layer prepares the model, comparison, plan, and diagnosis. Deterministic rules own plan status, limit checks, and simulated abort behaviour. The exported evidence bundle retains the inputs, findings, result, and stable case checksum.
 
-## Run the Phase 2 browser PoC
+See:
 
-```bash
-python3 -m http.server 8000
-```
+1. [Architecture notes](docs/ARCHITECTURE.md)
+2. [Rendered GitHub diagrams](docs/DIAGRAMS.md)
+3. [Test matrix](docs/TEST_MATRIX.md)
+4. [Ten minute demonstration script](docs/DEMO_SCRIPT.md)
 
-Open `http://localhost:8000`.
+## Reproducible validation
 
-## Run the Phase 3 edge API in mock mode
+Node.js 20 or later and Python 3.11 or later are recommended.
 
-The core edge service uses only the Python standard library.
+Run the entire Phase 2 validation:
 
-```bash
-export CERTARIG_OPERATOR_KEY='replace-with-a-long-random-key'
-python3 -m certarig_edge.cli serve \
-  --config config/rig.example.json \
-  --database certarig-evidence.sqlite3
-```
+    npm run check
 
-In a second terminal, create a reviewable plan without executing it:
+Or run each step:
 
-```bash
-python3 -m certarig_edge.cli demo
-```
+    npm test
+    python3 -m unittest discover -s tests_py -v
+    npm run build
+    npm run evidence
 
-Run the complete mock approval and execution flow:
+The repository contains six browser tests and eight supplementary reference software tests. GitHub Actions runs both suites after each published change. The website workflow publishes only the tested static files in the dist directory.
 
-```bash
-export CERTARIG_OPERATOR_KEY='replace-with-a-long-random-key'
-python3 -m certarig_edge.cli demo --execute
-```
+Generated case evidence is stored in evidence/phase2. The evidence is deterministic, synthetic, and reproducible from src/engine.mjs.
 
-The service binds to `127.0.0.1` by default. Use a private network or VPN and an authenticated reverse proxy before exposing it beyond one machine.
+## Supplementary implementation reference
 
-## Run on a Raspberry Pi
+The certarig_edge package demonstrates how the same approval and evidence contract can be represented through a local computer to Raspberry Pi API. It includes configuration hashing, deterministic validation, human approval, safe mock execution, evidence storage, and a hardware adapter boundary.
 
-1. Copy `config/rig.example.json` and change `hardware.mode` to `raspberry_pi`.
-2. Review the GPIO pins, ADS1115 address, channel scaling, sensor ranges, calibration identifiers, and safe limits.
-3. Install the Pi dependencies with `python3 -m pip install -e '.[pi]'`.
-4. Keep `CERTARIG_ENABLE_ACTUATION=0` during read only commissioning.
-5. Start the service and verify every sensor against an independent reference.
-6. Enable physical output only for a reviewed low voltage testbed with independent electrical protection.
+This code is supplementary implementation evidence, not a physical Phase 2 result. The tested claim is limited to computer based mock mode. See the [reference API contract](docs/API_CONTRACT.md).
 
-The Raspberry Pi must not drive an MCB, mains load, industrial valve, motor starter, or other hazardous load directly. Use a correctly rated isolated driver, normally safe output state, fuse, emergency stop, and process protection selected by a qualified person.
+## Phase 2 validation boundary
 
-See [Phase 3 workflow](docs/PHASE3_WORKFLOW.md) and [Raspberry Pi integration](docs/RASPBERRY_PI.md).
+The Phase 2 proof of concept uses synthetic data. It proves the workflow, repeatable decision rules, bounded simulator behaviour, software tests, static build, and evidence export. It does not prove live sensor accuracy, actuator performance, a pressure boundary, emergency stop performance, electrical protection, or industrial readiness.
 
-## Optional OpenAI planner and MCP review tools
+Raspberry Pi GPIO must never directly drive a relay coil, solenoid, miniature circuit breaker, mains circuit, motor starter, or industrial load.
 
-Install the optional dependencies on the engineering computer:
-
-```bash
-python3 -m pip install -e '.[agent]'
-export OPENAI_API_KEY='your-key'
-```
-
-`certarig_edge.agent.propose_plan_with_openai` uses Structured Outputs to produce a typed plan proposal. Deterministic server validation and human approval still apply. `python3 -m certarig_edge.mcp_server` exposes snapshot, plan proposal, and evidence retrieval tools. It intentionally exposes no approval, execution, stop, GPIO, shell, or arbitrary network tool.
-
-## Run tests
-
-Node.js 20 or later is required for the browser suite.
-
-```bash
-npm test
-python3 -m unittest discover -s tests_py -v
-```
-
-Both suites use built in test runners and the core tests require no external dependency.
+Future Phase 3 planning is deliberately separated in [future-phase-3](future-phase-3/README.md) and is not part of the Phase 2 validation claim.
 
 ## Repository structure
 
-```text
-index.html                 Browser PoC
-src/                       Browser reasoning and display logic
-certarig_edge/             Phase 3 edge API, client, safety, evidence, and adapters
-config/                    Reviewed rig configuration examples
-tests/                     Browser acceptance tests
-tests_py/                  Hardware stack and HTTP API tests
-systemd/                   Raspberry Pi service example
-docs/                      Architecture, workflow, hardware, and demo guidance
-```
-
-## Validation boundary
-
-The browser PoC and automated hardware tests use synthetic data. The Raspberry Pi adapter is implementation ready but has not been validated against a specific sensor, ADC, driver, valve, pressure boundary, or industrial installation. Physical validation must follow the documented staged protocol. AI assisted reasoning remains outside deterministic execution and independent safety paths.
+    index.html                 Phase 2 browser proof of concept
+    styles.css                 Browser presentation
+    src/                       Browser logic and deterministic case engine
+    tests/                     Browser acceptance tests
+    evidence/phase2/           Generated synthetic evidence bundles
+    docs/                      Phase 2 submission and technical documentation
+    scripts/                   Static build and evidence generation
+    .github/workflows/         Automated tests and GitHub Pages publishing
+    certarig_edge/             Supplementary reference implementation
+    tests_py/                  Reference implementation tests
+    future-phase-3/            Separately labelled future planning
 
 ## Student
 
