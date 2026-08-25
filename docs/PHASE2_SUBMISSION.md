@@ -10,7 +10,7 @@ Student ID: 2023EB03005
 
 Repository: https://github.com/shadybrook/certarig-phase-2-poc
 
-Live proof of concept: https://shadybrook.github.io/certarig-phase-2-poc/
+Live proof of concept: deployment workflow configured; confirm the final URL after its first successful Pages run
 
 ## Requirement traceability
 
@@ -46,7 +46,7 @@ Run the complete local validation:
 
 This command runs six browser engine tests, eight reference software tests, the static website build, and deterministic generation of the four Phase 2 evidence bundles.
 
-GitHub Actions repeats the tests and website build after every published change. GitHub Pages publishes the tested static artifact from the default branch.
+GitHub Actions is configured to repeat the tests and website build after every published change. GitHub Pages is configured to publish the tested static artifact from the default branch. The dated local result is recorded in docs/VALIDATION_RECORD.md.
 
 ## Submission boundary
 
