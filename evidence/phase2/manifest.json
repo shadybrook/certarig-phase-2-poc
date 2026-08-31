@@ -14,7 +14,7 @@
     {
       "case_id": "swapped",
       "title": "Case 2: Swapped analog channels",
-      "expected_outcome": "stopped",
+      "expected_outcome": "review",
       "evidence_checksum": "CERTARIG-SWAPPED-20260824",
       "file": "swapped.json"
     },

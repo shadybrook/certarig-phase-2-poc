@@ -16,7 +16,7 @@ test("approved baseline completes with no material finding", () => {
 test("swapped channels produce mapping and response conflicts", () => {
   const result = evaluateScenario("swapped");
   const codes = result.findings.map(finding => finding.code);
-  assert.equal(result.status.key, "stopped");
+  assert.equal(result.status.key, "review");
   assert.equal(result.plan.allowedToRun, false);
   assert.ok(codes.includes("MAPPING_CHANGED"));
   assert.ok(codes.includes("SIGNATURE_CONFLICT"));

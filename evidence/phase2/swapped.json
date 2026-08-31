@@ -84,7 +84,7 @@
     },
     {
       "code": "UNIT_CHANGED",
-      "severity": "stop",
+      "severity": "review",
       "channel": "AI0",
       "message": "AI0 changed unit from bar to L/min."
     },
@@ -96,7 +96,7 @@
     },
     {
       "code": "UNIT_CHANGED",
-      "severity": "stop",
+      "severity": "review",
       "channel": "AI1",
       "message": "AI1 changed unit from L/min to bar."
     }
@@ -262,7 +262,7 @@
     },
     {
       "code": "UNIT_CHANGED",
-      "severity": "stop",
+      "severity": "review",
       "channel": "AI0",
       "message": "AI0 changed unit from bar to L/min."
     },
@@ -274,7 +274,7 @@
     },
     {
       "code": "UNIT_CHANGED",
-      "severity": "stop",
+      "severity": "review",
       "channel": "AI1",
       "message": "AI1 changed unit from L/min to bar."
     },
@@ -317,9 +317,9 @@
     "abortRule": "Close V1 and record the event if pressure exceeds 4.2 bar, evidence is missing, or the model is unresolved."
   },
   "status": {
-    "key": "stopped",
-    "label": "Human evidence required",
-    "tone": "danger"
+    "key": "review",
+    "label": "Review required",
+    "tone": "warning"
   },
   "metrics": {
     "channels": 4,

@@ -109,64 +109,89 @@
       </section>
 
       <section id="demo" class="section-shell demo-section">
-        <div class="section-intro">
-          <p class="eyebrow">Interactive proof of concept</p>
-          <h2>Run four controlled engineering cases.</h2>
-          <p>Select a case to observe how the same evidence, policy, execution, and diagnosis loop responds.</p>
+        <div class="demo-intro">
+          <div class="section-intro">
+            <p class="eyebrow">Interactive proof of concept</p>
+            <h2>Four cases. One controlled decision path.</h2>
+            <p>Each case uses the same evidence contract and deterministic safety policy. Only the engineering condition changes.</p>
+          </div>
+          <div class="scope-card" aria-label="Phase 2 validation scope">
+            <span class="scope-dot" aria-hidden="true"></span>
+            <div><strong>Software PoC validated</strong><span>Synthetic data · no hardware authority</span></div>
+          </div>
         </div>
 
-        <div class="demo-controls">
-          <label for="scenario">Demonstration case</label>
-          <select id="scenario"></select>
-          <button id="run-analysis" class="button primary" type="button">Run analysis</button>
-          <button id="export-report" class="button secondary" type="button">Export evidence JSON</button>
-        </div>
-        <p id="announcement" class="sr-only" aria-live="polite"></p>
+        <div id="case-selector" class="case-selector" aria-label="Demonstration cases"></div>
 
-        <div class="result-heading">
-          <div><h3 id="case-title"></h3><p id="case-summary"></p></div>
-          <span id="status" class="status-pill"></span>
-        </div>
-
-        <div class="metric-grid">
-          <article><span>Mapped channels</span><strong id="metric-channels"></strong></article>
-          <article><span>Model confidence</span><strong id="metric-confidence"></strong></article>
-          <article><span>Findings</span><strong id="metric-findings"></strong></article>
-          <article><span>Maximum pressure</span><strong id="metric-pressure"></strong></article>
-        </div>
-
-        <div class="demo-grid">
-          <section class="demo-card chart-card">
-            <div class="card-heading"><h3>Measured response</h3><div class="legend"><span class="pressure-key">Pressure</span><span class="flow-key">Flow</span></div></div>
-            <div id="telemetry-chart"></div>
-          </section>
-
-          <section class="demo-card">
-            <div class="card-heading"><h3>Diagnosis</h3></div>
-            <ul id="findings" class="finding-list"></ul>
-          </section>
-
-          <section class="demo-card wide-card">
-            <div class="card-heading"><h3>Evidence backed channel map</h3></div>
-            <div class="table-wrap">
-              <table id="channel-table">
-                <thead><tr><th>Channel</th><th>Device</th><th>Unit</th><th>Calibration</th><th>Confidence</th></tr></thead>
-                <tbody></tbody>
-              </table>
+        <div class="demo-workspace">
+          <div class="workspace-toolbar">
+            <div class="scenario-select-wrap">
+              <label for="scenario">Selected case</label>
+              <select id="scenario"></select>
             </div>
+            <div class="workspace-actions">
+              <button id="run-analysis" class="button primary" type="button"><span class="button-dot" aria-hidden="true"></span>Run analysis</button>
+              <button id="export-report" class="button secondary" type="button">Export evidence JSON</button>
+            </div>
+          </div>
+          <p id="announcement" class="sr-only" aria-live="polite"></p>
+
+          <div class="result-heading">
+            <div class="result-copy">
+              <span id="case-number" class="case-number"></span>
+              <div><h3 id="case-title"></h3><p id="case-summary"></p></div>
+            </div>
+            <div class="outcome-wrap"><span>Decision</span><strong id="status" class="status-pill"></strong></div>
+          </div>
+
+          <div class="metric-grid">
+            <article><span>Mapped channels</span><strong id="metric-channels"></strong><small>typed I/O points</small></article>
+            <article><span>Model confidence</span><strong id="metric-confidence"></strong><small>evidence weighted</small></article>
+            <article><span>Findings</span><strong id="metric-findings"></strong><small>material observations</small></article>
+            <article><span>Maximum pressure</span><strong id="metric-pressure"></strong><small>limit 4.20 bar</small></article>
+          </div>
+
+          <section class="decision-card" aria-labelledby="decision-path-title">
+            <div class="card-heading decision-heading">
+              <div><p class="micro-label">Controlled workflow</p><h3 id="decision-path-title">Decision path</h3></div>
+              <span class="policy-chip">Deterministic policy</span>
+            </div>
+            <ol id="decision-path" class="decision-path"></ol>
           </section>
 
-          <section class="demo-card wide-card">
-            <div class="card-heading"><h3>Bounded commissioning plan</h3></div>
-            <ol id="plan" class="plan-list"></ol>
-            <p class="abort-box"><strong>Abort rule</strong><span id="abort-rule"></span></p>
-          </section>
-        </div>
+          <div class="demo-grid">
+            <section class="demo-card chart-card">
+              <div class="card-heading"><div><p class="micro-label">Synthetic telemetry</p><h3>Measured response</h3></div><div class="legend"><span class="pressure-key">Pressure</span><span class="flow-key">Flow</span></div></div>
+              <div id="telemetry-chart"></div>
+            </section>
 
-        <div class="bundle-strip">
-          <div><span>Evidence checksum</span><strong id="bundle-checksum"></strong></div>
-          <div><span>Recorded items</span><strong id="bundle-records"></strong></div>
-          <div><span>Control authority</span><strong>Deterministic runtime</strong></div>
+            <section class="demo-card diagnosis-card">
+              <div class="card-heading"><div><p class="micro-label">Explainable result</p><h3>Diagnosis</h3></div></div>
+              <ul id="findings" class="finding-list"></ul>
+            </section>
+
+            <section class="demo-card wide-card">
+              <div class="card-heading"><div><p class="micro-label">Traceable inputs</p><h3>Evidence backed channel map</h3></div></div>
+              <div class="table-wrap">
+                <table id="channel-table">
+                  <thead><tr><th>Channel</th><th>Device</th><th>Unit</th><th>Calibration</th><th>Confidence</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="demo-card wide-card">
+              <div class="card-heading"><div><p class="micro-label">Bounded execution</p><h3>Commissioning plan</h3></div></div>
+              <ol id="plan" class="plan-list"></ol>
+              <p class="abort-box"><span class="abort-icon" aria-hidden="true">!</span><span><strong>Abort rule</strong><span id="abort-rule"></span></span></p>
+            </section>
+          </div>
+
+          <div class="bundle-strip">
+            <div><span>Evidence checksum</span><strong id="bundle-checksum"></strong></div>
+            <div><span>Recorded items</span><strong id="bundle-records"></strong></div>
+            <div><span>Control authority</span><strong>Deterministic runtime</strong></div>
+          </div>
         </div>
       </section>
     </main>

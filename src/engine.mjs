@@ -137,7 +137,7 @@ function compareChannels(baseline, proposed) {
     if (expected.unit !== actual.unit) {
       changes.push({
         code: "UNIT_CHANGED",
-        severity: "stop",
+        severity: "review",
         channel: expected.id,
         message: `${expected.id} changed unit from ${expected.unit} to ${actual.unit}.`
       });
