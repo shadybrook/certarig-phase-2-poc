@@ -24,6 +24,9 @@ agent = [
 dev = [
   "pytest>=8.3,<9",
 ]
+evidence = [
+  "Pillow>=10,<12",
+]
 
 [project.scripts]
 certarig-edge = "certarig_edge.cli:main"

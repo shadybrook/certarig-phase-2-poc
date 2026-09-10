@@ -63,8 +63,10 @@ Only after Gates A-C pass:
 
 ```bash
 cd ~/certarig-phase-2-poc
-.venv/bin/python tools/phase3_estop_logger.py --output phase3-estop-input.csv
+python3 tools/phase3_estop_logger.py --output phase3-estop-input.csv
 ```
+
+On Raspberry Pi OS, use the system Python so `gpiozero` can use the OS-installed `lgpio` backend. If the logger reports that no GPIO pin factory can be loaded, stop and repair the environment; do not substitute mock data or reverse the safety polarity.
 
 6. Hold reset/released for 5 seconds.
 7. Latch the E-stop for 5 seconds.

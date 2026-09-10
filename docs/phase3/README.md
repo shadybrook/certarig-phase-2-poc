@@ -27,6 +27,7 @@ Phase 3 validates the CertaRig control and evidence architecture on a low-voltag
 - [P1 as-built photograph](../../phase3_evidence/2026-09-09_p1_potentiometer/README.md)
 - [P1 functional sweep](../../phase3_evidence/2026-09-09_p1_sweep/README.md)
 - [Dual P1/P2 sweep](../../phase3_evidence/2026-09-10_dual_pot_sweep/README.md)
+- [Physical E-stop GPIO24 test](../../phase3_evidence/2026-09-10_estop/README.md)
 
 ## Canonical physical pins
 
