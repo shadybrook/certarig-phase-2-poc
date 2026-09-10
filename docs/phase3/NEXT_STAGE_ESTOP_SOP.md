@@ -63,7 +63,7 @@ Only after Gates A-C pass:
 
 ```bash
 cd ~/certarig-phase-2-poc
-sudo .venv/bin/python tools/phase3_estop_logger.py --output phase3-estop-input.csv
+.venv/bin/python tools/phase3_estop_logger.py --output phase3-estop-input.csv
 ```
 
 6. Hold reset/released for 5 seconds.
