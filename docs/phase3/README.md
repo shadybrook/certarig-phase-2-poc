@@ -20,6 +20,10 @@ Phase 3 validates the CertaRig control and evidence architecture on a low-voltag
 - [Wave 1 commissioning plan](CertaRig_Wave_1_Commissioning_2026-09-07.md)
 - [Pi pre-wiring evidence](CertaRig_Phase3_Pi_PreWiring_Evidence_2026-09-08.md)
 - [Next-stage E-stop SOP](NEXT_STAGE_ESTOP_SOP.md)
+- [Next-stage relay and indicator SOP](NEXT_STAGE_RELAY_OUTPUT_SOP.md)
+- [Single-rail relay wiring diagram](diagrams/CertaRig_Relay_Output_Single_Rail_Wiring.svg)
+
+The relay-output SOP is the controlled Phase 3 instruction for the indicator-only output stage. Its fused single-rail 5 V arrangement supersedes only the separate relay-supply version of Circuit B in the 7 September wiring guide. It must not be used for motors, servos, pumps, valves, mains voltage or capstone hydraulic hardware.
 
 ## Physical evidence
 
