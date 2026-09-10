@@ -40,6 +40,15 @@ See:
 4. [Ten minute demonstration script](docs/DEMO_SCRIPT.md)
 5. [Dated validation record](docs/VALIDATION_RECORD.md)
 
+## Phase 3 dry-bench progress
+
+Phase 3 is now validating the control and evidence architecture on a low-voltage dry hardware bench. The Pi, SSH, I2C, ADS1115 at `0x48`, and two independent 0-3.3 V potentiometer input paths have physical evidence. Hydraulic commissioning remains reserved for the capstone.
+
+- [Phase 3 document and evidence index](docs/phase3/README.md)
+- [Canonical Wave 1 wiring guide](docs/phase3/CertaRig_Wave_1_Wiring_and_Circuit_Guide_2026-09-07.pdf)
+- [Dual potentiometer evidence](phase3_evidence/2026-09-10_dual_pot_sweep/README.md)
+- [Next-stage E-stop SOP](docs/phase3/NEXT_STAGE_ESTOP_SOP.md)
+
 ## Reproducible validation
 
 Node.js 20 or later and Python 3.11 or later are recommended.
@@ -55,7 +64,7 @@ Or run each step:
     npm run build
     npm run evidence
 
-The repository contains six browser tests and eight supplementary reference software tests. GitHub Actions runs both suites after each published change. The website workflow publishes only the tested static files in the dist directory.
+The repository contains six browser tests and fourteen supplementary reference software tests. GitHub Actions runs both suites after each published change. The website workflow publishes only the tested static files in the dist directory.
 
 Generated case evidence is stored in evidence/phase2. The evidence is deterministic, synthetic, and reproducible from src/engine.mjs.
 
@@ -85,7 +94,9 @@ Future Phase 3 planning is deliberately separated in [future-phase-3](future-pha
     .github/workflows/         Automated tests and GitHub Pages publishing
     certarig_edge/             Supplementary reference implementation
     tests_py/                  Reference implementation tests
-    future-phase-3/            Separately labelled future planning
+    future-phase-3/            Historical Phase 3 planning baseline
+    phase3_evidence/           Curated physical dry-bench evidence
+    docs/phase3/               Phase 3 wiring, inventory and SOP documents
 
 ## Student
 

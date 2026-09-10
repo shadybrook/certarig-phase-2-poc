@@ -23,6 +23,12 @@ def _require_number(value: Any, field: str) -> float:
     return float(value)
 
 
+def _require_bool(value: Any, field: str) -> bool:
+    if not isinstance(value, bool):
+        raise ConfigurationError(f"{field} must be true or false")
+    return value
+
+
 def load_config(path: str | Path) -> RigConfig:
     source = Path(path)
     raw = json.loads(source.read_text(encoding="utf-8"))
@@ -79,12 +85,19 @@ def load_config(path: str | Path) -> RigConfig:
         ads1115_address=int(hardware_raw.get("ads1115_address", 0x48)),
         valve_output_gpio=int(hardware_raw.get("valve_output_gpio", 23)),
         emergency_stop_gpio=int(hardware_raw.get("emergency_stop_gpio", 24)),
+        emergency_stop_active_high=_require_bool(
+            hardware_raw.get("emergency_stop_active_high", True),
+            "hardware.emergency_stop_active_high",
+        ),
         relay_feedback_gpio=(
             int(hardware_raw["relay_feedback_gpio"])
             if hardware_raw.get("relay_feedback_gpio") is not None
             else None
         ),
-        output_active_high=bool(hardware_raw.get("output_active_high", True)),
+        output_active_high=_require_bool(
+            hardware_raw.get("output_active_high", True),
+            "hardware.output_active_high",
+        ),
     )
     sample_interval_ms = int(raw.get("sample_interval_ms", 100))
     if sample_interval_ms < 20:

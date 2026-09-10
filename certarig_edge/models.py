@@ -48,6 +48,7 @@ class HardwareConfig:
     ads1115_address: int = 0x48
     valve_output_gpio: int = 23
     emergency_stop_gpio: int = 24
+    emergency_stop_active_high: bool = True
     relay_feedback_gpio: int | None = 25
     output_active_high: bool = True
 

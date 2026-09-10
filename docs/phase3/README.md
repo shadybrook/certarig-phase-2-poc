@@ -1,0 +1,57 @@
+# CertaRig Phase 3 dry-bench index
+
+Phase 3 validates the CertaRig control and evidence architecture on a low-voltage dry hardware bench. Hydraulic commissioning, water, pumps, mains loads and pressure-bearing claims remain outside this phase and are reserved for the capstone.
+
+## Current verified status
+
+- Raspberry Pi 3 Model A+ boot, SSH and I2C commissioning passed.
+- ADS1115 was detected repeatedly at address `0x48`.
+- P1 on A0 and P2 on A1 were acquired together at approximately 10 Hz.
+- The paired run contains 4,457 complete samples. A0 covered 0-3.302 V and A1 covered 0-3.300 V.
+- The fail-safe E-stop software polarity is explicit and tested: GPIO24 LOW is healthy; HIGH/open is active.
+- Relay feedback is disabled for the initial bench and physical pin 22 remains disconnected.
+
+## Controlled documents
+
+- [Wave 1 wiring guide, PDF](CertaRig_Wave_1_Wiring_and_Circuit_Guide_2026-09-07.pdf)
+- [Wave 1 wiring guide, editable DOCX](CertaRig_Wave_1_Wiring_and_Circuit_Guide_2026-09-07.docx)
+- [Hardware inventory register, PDF](CertaRig_Phase_3_Hardware_Inventory_Register_2026-09-06.pdf)
+- [Hardware inventory register, Markdown](CertaRig_Phase_3_Hardware_Inventory_Register_2026-09-06.md)
+- [Wave 1 commissioning plan](CertaRig_Wave_1_Commissioning_2026-09-07.md)
+- [Pi pre-wiring evidence](CertaRig_Phase3_Pi_PreWiring_Evidence_2026-09-08.md)
+- [Next-stage E-stop SOP](NEXT_STAGE_ESTOP_SOP.md)
+
+## Physical evidence
+
+- [ADS1115 commissioning](../../phase3_evidence/2026-09-09_ads1115_commissioning/README.md)
+- [P1 as-built photograph](../../phase3_evidence/2026-09-09_p1_potentiometer/README.md)
+- [P1 functional sweep](../../phase3_evidence/2026-09-09_p1_sweep/README.md)
+- [Dual P1/P2 sweep](../../phase3_evidence/2026-09-10_dual_pot_sweep/README.md)
+
+## Canonical physical pins
+
+| Function | Raspberry Pi physical pin | BCM name |
+|---|---:|---|
+| ADS VDD | 1 | 3V3 |
+| ADS SDA | 3 | GPIO2 / SDA1 |
+| ADS SCL | 5 | GPIO3 / SCL1 |
+| ADS GND | 6 | GND |
+| P2 ground | 9 | GND |
+| P1 ground | 14 | GND |
+| Future relay command | 16 | GPIO23 |
+| Potentiometer 3.3 V splitter | 17 | 3V3 |
+| E-stop sense | 18 | GPIO24 |
+| E-stop ground | 20 | GND |
+| Feedback, disabled | 22 | GPIO25 |
+
+Physical pin 16 is GPIO23 and is never a ground connection. GPIO inputs and ADS inputs must never receive 5 V.
+
+## Reproducibility
+
+The generator scripts are in `tools/`. The dedicated hardware configuration is [`config/rig.wave1.json`](../../config/rig.wave1.json). Run the complete software validation with:
+
+```bash
+npm run check
+```
+
+Raw network identifiers, credentials, Wi-Fi setup screenshots and unredacted SSH transcripts are intentionally excluded from this public repository.

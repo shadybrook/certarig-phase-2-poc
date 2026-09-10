@@ -13,6 +13,7 @@ from certarig_edge.safety import validate_plan
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "rig.example.json"
+WAVE1_CONFIG = ROOT / "config" / "rig.wave1.json"
 
 
 class ConfigAndSafetyTests(unittest.TestCase):
@@ -22,11 +23,28 @@ class ConfigAndSafetyTests(unittest.TestCase):
         self.assertEqual(first.config_hash, second.config_hash)
         self.assertEqual(first.rig_id, "pressure-flow-rig-01")
 
+    def test_wave1_configuration_matches_dry_bench_contract(self) -> None:
+        config = load_config(WAVE1_CONFIG)
+        self.assertEqual(config.hardware.mode, "raspberry_pi")
+        self.assertTrue(config.hardware.emergency_stop_active_high)
+        self.assertIsNone(config.hardware.relay_feedback_gpio)
+        self.assertEqual([channel.adc_channel for channel in config.channels], [0, 1])
+        self.assertEqual([channel.raw_max_v for channel in config.channels], [3.302, 3.3])
+
     def test_required_channel_without_calibration_is_rejected(self) -> None:
         payload = json.loads(CONFIG.read_text(encoding="utf-8"))
         payload["channels"][0]["calibration_id"] = None
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            with self.assertRaises(ConfigurationError):
+                load_config(path)
+
+    def test_emergency_stop_active_high_requires_boolean(self) -> None:
+        payload = json.loads(CONFIG.read_text(encoding="utf-8"))
+        payload["hardware"]["emergency_stop_active_high"] = "true"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid-estop-polarity.json"
             path.write_text(json.dumps(payload), encoding="utf-8")
             with self.assertRaises(ConfigurationError):
                 load_config(path)

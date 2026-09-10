@@ -52,7 +52,7 @@ class RaspberryPiHardware(HardwareAdapter):
 
     def __init__(self, config: RigConfig) -> None:
         try:
-            from gpiozero import Button, DigitalInputDevice, OutputDevice
+            from gpiozero import DigitalInputDevice, OutputDevice
         except ImportError as exc:
             raise HardwareError("gpiozero is required for Raspberry Pi GPIO access") from exc
 
@@ -63,7 +63,11 @@ class RaspberryPiHardware(HardwareAdapter):
             active_high=hardware.output_active_high,
             initial_value=False,
         )
-        self.emergency_stop = Button(hardware.emergency_stop_gpio, pull_up=True, bounce_time=0.02)
+        self.emergency_stop = DigitalInputDevice(
+            hardware.emergency_stop_gpio,
+            pull_up=True,
+            bounce_time=0.02,
+        )
         self.feedback = (
             DigitalInputDevice(hardware.relay_feedback_gpio, pull_up=False)
             if hardware.relay_feedback_gpio is not None
@@ -71,6 +75,10 @@ class RaspberryPiHardware(HardwareAdapter):
         )
         self.adc = ADS1115Reader(hardware.i2c_bus, hardware.ads1115_address)
         self.force_safe_state()
+
+    def emergency_stop_is_active(self) -> bool:
+        raw_high = bool(self.emergency_stop.value)
+        return raw_high if self.config.hardware.emergency_stop_active_high else not raw_high
 
     @staticmethod
     def _scale(channel: ChannelConfig, voltage: float) -> float:
@@ -113,14 +121,14 @@ class RaspberryPiHardware(HardwareAdapter):
         return RigSnapshot(
             rig_id=self.config.rig_id,
             config_hash=self.config.config_hash,
-            emergency_stop_active=self.emergency_stop.is_pressed,
+            emergency_stop_active=self.emergency_stop_is_active(),
             output_safe=self.output_is_safe(),
             samples=tuple(samples),
             captured_at=captured,
         )
 
     def set_valve(self, open_state: bool) -> None:
-        if open_state and self.emergency_stop.is_pressed:
+        if open_state and self.emergency_stop_is_active():
             raise HardwareError("emergency stop is active")
         if open_state:
             self.valve.on()
