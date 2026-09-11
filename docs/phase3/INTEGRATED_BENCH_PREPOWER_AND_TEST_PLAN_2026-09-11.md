@@ -1,7 +1,7 @@
 # CertaRig integrated bench pre-power review and evidence plan
 
 Document date: 11 September 2026
-Status: **HOLD - do not power until every Gate 0 result is recorded and accepted**
+Status: **HOLD - corrected relay control wiring; repeat the listed unpowered checks before power**
 Scope: low-voltage Phase 3 dry bench only
 
 ## 1. Evidence and authority boundary
@@ -24,7 +24,7 @@ Observed in the photographs:
 
 - Raspberry Pi 3 Model A+, ADS1115, two potentiometers, dual-NC E-stop, BC547B interface area, relay module, 100 uF capacitor, glass fuse holder, and two panel indicators are present.
 - ADS1115 A0/A1 and the previously verified Pi connections appear to remain installed.
-- The relay low-voltage block appears populated for DC+, DC-, CH1, and trigger COM, with CH2 apparently unused; cable colours do not certify identity.
+- The relay low-voltage block is populated for DC+, DC-, and CH1; CH2 is unused. The former physical-pin-17 wire to lower/control COM has been removed after it reproduced the Pi power fault; cable colours do not certify identity.
 - In the earlier photographs, only two wires were clearly visible on one three-screw relay contact group. The operator subsequently reported that `K1 NO` was connected to breadboard `F14`. An updated photograph and the U21-U23 continuity results are still required before this is accepted electrically.
 - The S1 `LOW-COM` jumper position, fuse rating, capacitor polarity stripe, transistor C-B-E rows, indicator polarity, and hidden breadboard strips are not legible enough to approve from the photographs.
 - The inhibited indicator is red in the as-built bench, replacing the yellow indicator named in the earlier design. Its function is unchanged.
@@ -70,7 +70,7 @@ For low-resistance continuity checks, first record the reading obtained by firml
 | U11 | Pi pin 16 through installed base resistor to BC547B base C5 | 0.95-1.05 kohm |
 | U12 | BC547B base-row resistor to emitter row | Installed 10 kohm path; record actual reading and probe direction |
 | U13 | BC547B collector C4 to relay CH1 | 0-1 ohm |
-| U14 | Shared pin-17 3.3 V hub to relay trigger COM | 0-1 ohm |
+| U14 | Shared pin-17 3.3 V hub to relay lower/control COM | `OL`; no installed conductor |
 | U15 | `FUSED_5V` to relay DC+, E-stop reset | 0-1 ohm through NC2 |
 | U16 | `FUSED_5V` to relay DC+, E-stop latched | `OL` |
 | U17 | Pi pin 18 to pin 20, E-stop reset | 0-1 ohm through NC1 |
@@ -80,6 +80,9 @@ For low-resistance continuity checks, first record the reading obtained by firml
 | U21 | Measured K1 NO terminal to breadboard F14 | 0-1 ohm |
 | U22 | Measured K1 NO terminal through the installed branch resistor to green indicator positive | 0.95-1.05 kohm |
 | U23 | Measured K1 NC terminal through the installed branch resistor to red indicator positive | 0.95-1.05 kohm |
+| U24 | Pin-17 splitter to P1 high terminal | 0-1 ohm |
+| U25 | Pin-17 splitter to P2 high terminal | 0-1 ohm |
+| U26 | Relay lower/control COM to DC- with S1 on COM-LOW | Record actual module-specific resistance; never feed this terminal from 3.3 V |
 
 ### 3.4 No-short register
 
@@ -92,12 +95,13 @@ With the E-stop latched and fuse removed:
 | S03 | Pi physical pin 16 / GPIO23 to Pi 5 V | No continuity beep |
 | S04 | BC547B collector to emitter | No sustained continuity beep |
 | S05 | E-stop NC1 pair to NC2 pair | No cross-continuity |
-| S06 | Shared pin-17 3.3 V hub to common ground | No sustained continuity beep; after isolating relay trigger COM, approximately 4.5 kohm is expected from the measured 10 kohm and 8.4 kohm potentiometer tracks in parallel |
+| S06 | Shared pin-17 3.3 V hub to common ground | No sustained continuity beep; with only the measured 10 kohm and 8.4 kohm pot tracks connected, approximately 4.5 kohm is expected |
 | S07 | Pi-side fuse-holder input to common ground | No sustained continuity beep |
+| S08 | Shared pin-17 3.3 V hub to relay lower/control COM | No continuity; `OL` |
 
 Any failure keeps the status at HOLD. Do not install the fuse or power the Pi.
 
-If S06 is low resistance, disconnect the pin-17 source wire and relay trigger COM from the hub while power remains removed. Verify each potentiometer only across its two fixed end terminals: P1 should remain approximately 10 kohm and P2 approximately 8.4 kohm throughout shaft travel. The wiper must connect only to ADS1115 A0 or A1; it must not be used as the shared 3.3 V feed.
+The earlier 9 ohm S06 failure followed the physical-pin-17-to-relay-lower-COM branch during isolation. That branch is now prohibited. Before retrying Gate 1, repeat S06 and S08 with the branch removed. If S06 is still low, isolate P1 and P2 one at a time and verify each potentiometer only across its two fixed end terminals: P1 should remain approximately 10 kohm and P2 approximately 8.4 kohm throughout shaft travel. The wiper must connect only to ADS1115 A0 or A1.
 
 ## 4. Gate 1: Pi-only baseline, fuse removed
 
@@ -110,19 +114,18 @@ After Gate 0 is accepted:
 5. Measure pin 2 to pin 25 and pin 17 to pin 25. Accept 4.75-5.25 V and 3.20-3.35 V respectively.
 6. Shut down through SSH, wait for activity to stop, and remove PWR IN.
 
-## 5. Gate 2: fused branch with hardwired inhibit
+## 5. Gate 2: relay characterization and hardwired inhibit
 
-1. Insert the verified 1 A fuse while power is disconnected.
-2. Latch the E-stop.
-3. Power through PWR IN without touching any wire.
-4. Confirm no unsolicited relay click and no green indication.
-5. Measure `FUSED_5V` to ground: 4.75-5.25 V.
-6. Measure relay DC+ to ground while latched: approximately 0 V.
-7. Confirm K1 is de-energized and the red inhibited indicator is on.
-8. Reset the E-stop.
-9. Measure relay DC+ to ground: 4.75-5.25 V.
-10. Confirm K1 remains de-energized, red remains on, and green remains off.
-11. Recheck `vcgencmd get_throttled`; preferred result `0x0`.
+1. With power removed, isolate the K1 contact load by disconnecting the row-12-to-K1-contact-COM wire; disconnect CH1 from the transistor at the relay screw.
+2. Keep lower/control COM externally disconnected, S1 on COM-LOW, CH2 empty, and insert the verified 1 A fuse.
+3. Latch the E-stop, power through PWR IN, and verify `FUSED_5V` is 4.75-5.25 V while relay DC+ is approximately 0 V.
+4. Reset the E-stop and verify relay DC+ is 4.75-5.25 V with no unsolicited K1 click.
+5. Record lower/control COM-to-DC- and CH1-to-DC- voltages.
+6. Probe the documented low-trigger behaviour by connecting CH1 to DC- through a measured 1 kohm resistor. If K1 does not click, stop and report; do not move S1 under power or apply 5 V to CH1.
+7. Remove the temporary resistor and confirm K1 releases. Preserve the module LED and audible/mechanical observations. Do not use resistance or continuity mode while the module is powered; contact transfer is verified later by the powered indicator truth table.
+8. Remove the temporary resistor, reconnect CH1 to the BC547 collector, and perform one transistor-controlled click test while the K1 contact load remains isolated.
+9. Only after that passes, power down and restore row 12 to K1 contact COM for the red/green truth-table test.
+10. Recheck `vcgencmd get_throttled`; preferred result `0x0`.
 
 Stop immediately for a Pi reset, undervoltage, unexpected relay click, green light without a permit, wrong voltage, unstable wiring, warmth, smell, spark, or smoke.
 

@@ -1,12 +1,12 @@
 # CertaRig next-stage SOP: fail-safe relay and indicator output
 
-Document date: 10 September 2026  
-Revision: 1.1
+Document date: 11 September 2026
+Revision: 1.2
 Scope: Phase 3 low-voltage dry bench only
 
 ## 1. Purpose and controlled scope
 
-This SOP adds one physical output channel to the already verified CertaRig bench. GPIO23 commands relay channel 1 through a BC547B transistor. The second normally-closed E-stop contact removes power from the relay coil. The relay contacts select a red inhibited indicator or a green permitted indicator. Revision 1.1 records the as-built substitution of red for the originally planned yellow indicator; the electrical function is unchanged.
+This SOP adds one physical output channel to the already verified CertaRig bench. GPIO23 commands relay channel 1 through a BC547B transistor. The second normally-closed E-stop contact removes power from the relay coil. The relay contacts select a red inhibited indicator or a green permitted indicator. Revision 1.1 recorded the as-built substitution of red for the originally planned yellow indicator. Revision 1.2 removes the former pin-17-to-relay-control-COM connection after the powered isolation test showed that branch collapsed the Pi power indication.
 
 This stage uses only the Raspberry Pi power-input rail and low-voltage indicators. Do not connect mains voltage, a pump, a solenoid, a servo, water, or any pressure-bearing equipment.
 
@@ -39,7 +39,7 @@ Do not move any of these wires. Physical pin 16 is GPIO23, not ground. Physical 
 | Boot-safe pull-down | 10 kohm from BC547B base to emitter |
 | Control ground | Pi physical pin 25 / GND -> breadboard ground rail -> BC547B emitter |
 | Relay trigger | BC547B collector -> relay `CH1 / IN1` |
-| Trigger reference | Shared Pi 3.3 V distribution hub -> relay control `COM` |
+| Trigger reference | Relay S1 jumper on `COM-LOW`; lower control `COM` has no external wire |
 | Relay power source | Pi physical pin 2 / 5V -> 1 A fuse -> fused 5 V node |
 | Hardwired inhibit | Fused 5 V node -> E-stop `NC2-A` -> `NC2-B` -> relay `DC+ / VCC` |
 | Relay power return | Relay `DC- / GND` -> common ground node |
@@ -58,7 +58,7 @@ The two indicator resistors are protective current limiters. Keep them even if t
 | W16 | BC547B base | 10 kohm pull-down | BC547B emitter | Label `B-E 10K` |
 | W17 | Pi physical pin 25 / GND | Ground distribution point | BC547B emitter | Black, `0V` |
 | W18 | BC547B collector | Direct signal wire | Relay `CH1 / IN1` | Green, `CH1` |
-| W19 | Shared `CONTROL_3V3` hub sourced by one wire from physical pin 17 | Direct branch wire | Relay trigger-side `COM` | Red or purple, `CTRL_3V3` |
+| W19 | Relay lower/control `COM` | No wire | Leave externally disconnected while S1 bridges `COM-LOW` | `NO EXT WIRE` |
 | W20 | Pi physical pin 2 / 5V | Direct wire | 1 A fuse-holder input | Red, `PI_5V` |
 | W21 | Fuse-holder output | Distribution splice | `FUSED_5V` node | Red, `FUSED_5V` |
 | W22 | `FUSED_5V` | Direct wire | E-stop `NC2-A` | Red, `NC2_IN` |
@@ -95,19 +95,18 @@ The six large contact screws are printed in two groups of:
 
 Use only the group belonging to relay `K1`. Confirm K1 by the PCB marking and by the unpowered continuity test in Gate C; do not choose a group only because it appears upper or lower in a photograph.
 
-For channel 1, fit the S1 jumper across the pins marked `LOW` and `COM`. Leave CH2 unconnected. The trigger-side `COM` screw is the reference for the optocoupler input; for this low-trigger transistor interface it connects to the Pi 3.3 V control rail. It is not either of the K1/K2 contact `COM` screws.
+For channel 1, fit the S1 jumper across the pins marked `LOW` and `COM`. Leave CH2 unconnected. Keep the lower/control `COM` screw externally disconnected. It is not either of the K1/K2 contact `COM` screws.
+
+This rule is hardware-derived. With all power removed, the operator measured the lower/control `COM` close to `DC-` in the `COM-LOW` jumper position. During staged isolation, adding only the physical-pin-17-to-lower-COM branch extinguished the Pi red PWR indication; removing only that branch restored normal PWR indication. Never reconnect physical pin 17, physical pin 1, or any other 3.3 V source to this lower/control `COM` terminal.
 
 ### 4.1 Physical pin 17 distribution clarification
 
-Physical pin 17 already supplies both verified potentiometers. Do not stack another connector or loose wire directly onto that occupied Pi header pin. Pin 17 must have one outgoing conductor to a shared `CONTROL_3V3` distribution hub. The hub then provides three parallel branches:
+Physical pin 17 supplies only the two verified potentiometers. Do not stack another connector or loose wire directly onto that occupied Pi header pin. Pin 17 has one outgoing conductor to the existing 3.3 V distribution splitter. The splitter provides exactly two branches:
 
 1. Potentiometer P1 high terminal.
 2. Potentiometer P2 high terminal.
-3. Relay trigger-side `COM` reference.
 
-Use the breadboard positive rail or a suitably rated common terminal/lever connector as the hub. If the existing splitter has only two outputs and no safe third connection, shut down and unplug the Pi, then replace or rebuild it as a one-input/three-output distribution point. Do not use another GPIO as a power source. Physical pin 1 is the same 3.3 V rail but is already assigned to ADS1115 VDD, so moving the relay reference there provides no electrical advantage.
-
-The two potentiometers draw less than 1 mA together. The relay trigger reference feeds only the optocoupler input, not the 5 V relay coils; the coils remain powered through `DC+` from the fused 5 V branch. The trigger connection must still be verified during the staged low-voltage test before normal operation.
+Do not add a third branch for the relay. The two potentiometers draw less than 1 mA together. Relay power comes only through `DC+` from the fused 5 V branch; relay `DC-` returns to common ground; CH1 is the only command input used.
 
 ## 5. Parts required
 
@@ -218,18 +217,18 @@ Stop if the contact truth table does not match. The measured contact behaviour i
 The breadboard is used only for the transistor and its low-current resistors. Do not route the relay contact supply, a motor, a pump, or mains voltage through the breadboard.
 
 1. Use the multimeter to map the MB102 rails. Some long power rails are split in the middle.
-2. Select one rail as `CONTROL 3V3` and another as `CONTROL GND`.
+2. Select one rail as `CONTROL GND`. The existing 3.3 V splitter remains dedicated to P1 and P2 and is not extended onto the relay interface.
 3. Connect Pi physical pin 25 to the `CONTROL GND` rail.
-4. Inspect the existing physical-pin-17 splitter. If it has only the two occupied potentiometer outputs, replace it while the Pi is unplugged with a shared hub that has at least three outputs.
-5. Connect one wire from physical pin 17 to the `CONTROL 3V3` hub or breadboard rail.
-6. Connect P1 high, P2 high, and relay trigger-side `COM` as three separate parallel branches from that hub. Do not place multiple loose connectors directly on pin 17.
+4. Confirm the existing physical-pin-17 splitter has only the two potentiometer high-terminal branches.
+5. Confirm there is no continuity wire or jumper from the pin-17 splitter to the relay lower/control `COM`.
+6. Leave the relay lower/control `COM` screw empty and label it `NO EXT WIRE`.
 7. Insert the BC547B so collector, base, and emitter occupy three electrically separate breadboard rows.
 8. Keep the flat face visible and label the rows `C`, `B`, and `E`.
 9. Connect the emitter row to `CONTROL GND`.
 10. Connect a 10 kohm resistor from the base row to the emitter row.
 11. Connect Pi physical pin 16 / GPIO23 through the measured 1 kohm resistor to the base row.
 12. Connect the collector row to relay `CH1 / IN1`.
-13. Confirm relay trigger-side `COM` is connected to the shared `CONTROL 3V3` hub.
+13. Confirm relay lower/control `COM` is externally disconnected and S1 alone bridges `COM-LOW` on the module.
 14. Leave `CH2 / IN2` empty.
 
 Breadboard rule: holes in one five-hole strip are connected. No two transistor leads may share the same strip.
@@ -275,6 +274,9 @@ Trace every new connection aloud from source to destination. Compare it with the
 | K1 `COM` to K1 `NO` | Relay unpowered | `OL` |
 | GPIO23 side of 1 kohm to BC547 base | Either | Approximately 1 kohm |
 | BC547 base to emitter | Either | Approximately 10 kohm in the appropriate meter direction after allowing for junction effects |
+| Pin-17 splitter to P1 and P2 high terminals | Either | Continuity to each potentiometer high terminal |
+| Pin-17 splitter to relay lower/control `COM` | Either | `OL`; no installed conductor |
+| Relay lower/control `COM` to `DC-` with S1 on `COM-LOW` | Either | Record the actual module-specific reading; do not use it as a power input |
 
 ### 11.3 Short-circuit checks
 
@@ -284,6 +286,7 @@ Trace every new connection aloud from source to destination. Compare it with the
 4. Confirm physical pin 22 remains empty.
 5. Confirm the capacitor stripe is on ground.
 6. Confirm the E-stop NC1 sense pair and NC2 power pair have no cross-continuity.
+7. Confirm physical pin 17 has no installed path to relay lower/control `COM`.
 
 If any result disagrees, do not install the fuse and do not power the Pi.
 
@@ -308,26 +311,39 @@ The preferred result is `throttled=0x0`.
 6. Measure physical pin 2 to physical pin 25. Accept 4.75-5.25 V.
 7. Shut down and remove PWR IN.
 
-### 12.2 Relay power with output forced safe
+### 12.2 Relay-module characterization with contact load isolated
 
-1. Confirm GPIO23 will be held LOW by the dedicated hardware test program before it is configured as an output.
-2. Insert the verified 1 A fuse.
-3. Latch the E-stop.
-4. Power the Pi through PWR IN.
-5. Measure `FUSED_5V` to ground; accept 4.75-5.25 V.
-6. Measure relay `DC+` to ground; expect approximately 0 V while the E-stop is latched.
-7. Confirm the relay is not energized.
-8. Reset the E-stop.
-9. Measure relay `DC+` to ground; accept 4.75-5.25 V.
-10. Confirm the relay remains de-energized while GPIO23 is LOW.
-11. Confirm red is on and green is off.
-12. Run `vcgencmd get_throttled` again; the preferred result remains `0x0`.
+This gate resolves the remaining module-specific trigger ambiguity without energizing the indicator contact circuit.
+
+1. With all power removed, disconnect and label only the wire from `FUSED_5V` row 12 to K1 contact `COM`. Leave the relay contact load isolated.
+2. Disconnect CH1 from the BC547 collector at the relay screw. Leave the lower/control `COM` screw empty and S1 on `COM-LOW`.
+3. Insert the verified 1 A fuse and latch the E-stop.
+4. Power the Pi through PWR IN. Do not touch wiring.
+5. Measure `FUSED_5V` to ground; accept 4.75-5.25 V. Measure relay `DC+` to ground; expect approximately 0 V while latched.
+6. Reset the E-stop. Measure relay `DC+` to ground; accept 4.75-5.25 V. Confirm K1 does not click merely because module power was applied.
+7. Measure lower/control `COM` to `DC-`, then CH1 to `DC-`, in DC-voltage mode. Record both values and the relay state.
+8. Use a temporary measured 1 kohm resistor to connect CH1 to `DC-`. This is a current-limited low-trigger probe. Do not connect CH1 directly to a Pi rail.
+9. If K1 clicks, remove the temporary resistor and confirm it releases. Record the module K1 LED and audible/mechanical response. The contact transfer will be verified later by the powered red/green indicator truth table; never use resistance or continuity mode on a powered circuit. If K1 does not click, remove power and report the readings; do not move S1 or try a 5 V drive without review.
+10. Shut down the Pi, remove PWR IN, remove the fuse, and remove the temporary resistor.
+
+The expected family-level behaviour in `COM-LOW` is that a low CH1 level energizes K1, but the measured response of this exact module is authoritative. This characterization must pass before the BC547 is reconnected.
+
+### 12.3 Relay power with output forced safe
+
+1. With power removed and the fuse removed, reconnect CH1 to the verified BC547 collector. Keep lower/control `COM` externally disconnected.
+2. Keep K1 contact `COM` disconnected from `FUSED_5V` for the first transistor-controlled click test.
+3. Confirm GPIO23 will be held LOW by the dedicated hardware test program before it is configured as an output.
+4. Insert the fuse, latch the E-stop, power through PWR IN, then verify relay `DC+` is approximately 0 V.
+5. Reset the E-stop and verify relay `DC+` is 4.75-5.25 V. K1 must remain de-energized while GPIO23 is LOW.
+6. Run the purpose-built command test for one `permit` then `safe` cycle. K1 should energize only for `permit` and must release for `safe`.
+7. Recheck `vcgencmd get_throttled`; preferred result remains `0x0`.
+8. Shut down, remove PWR IN, and remove the fuse before restoring the K1 contact `COM` wire.
 
 Stop immediately if the Pi resets, an undervoltage warning appears, the measured 5 V rail is below 4.75 V, the wrong indicator lights, the relay activates without a command, a wire becomes warm, or there is smell or smoke.
 
-### 12.3 Command test
+### 12.4 Integrated indicator command test
 
-The command test will be run through SSH with a purpose-built logger so each transition is timestamped. Do not manually connect GPIO23 to a power rail.
+After the isolated relay-characterization and transistor-controlled click tests pass, restore `FUSED_5V` to K1 contact `COM` while power is removed. The integrated command test will be run through SSH with a purpose-built logger so each transition is timestamped. Do not manually connect GPIO23 to a power rail.
 
 Expected behaviour:
 

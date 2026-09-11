@@ -10,6 +10,7 @@ Phase 3 validates the CertaRig control and evidence architecture on a low-voltag
 - The paired run contains 4,457 complete samples. A0 covered 0-3.302 V and A1 covered 0-3.300 V.
 - The fail-safe E-stop software polarity is explicit and tested: GPIO24 LOW is healthy; HIGH/open is active.
 - Relay feedback is disabled for the initial bench and physical pin 22 remains disconnected.
+- The 11 September isolation test found that relay lower/control COM must not be connected to Pi 3.3 V. Physical pin 17 now supplies only P1 and P2; relay trigger direction remains on HOLD pending the controlled CH1 characterization gate.
 
 ## Controlled documents
 
@@ -24,7 +25,7 @@ Phase 3 validates the CertaRig control and evidence architecture on a low-voltag
 - [Integrated bench pre-power review and evidence plan](INTEGRATED_BENCH_PREPOWER_AND_TEST_PLAN_2026-09-11.md)
 - [Single-rail relay wiring diagram](diagrams/CertaRig_Relay_Output_Single_Rail_Wiring.svg)
 
-The relay-output SOP is the controlled Phase 3 instruction for the indicator-only output stage. Its fused single-rail 5 V arrangement supersedes only the separate relay-supply version of Circuit B in the 7 September wiring guide. It must not be used for motors, servos, pumps, valves, mains voltage or capstone hydraulic hardware.
+The relay-output SOP revision 1.2 is the controlled Phase 3 instruction for the indicator-only output stage. Its fused single-rail 5 V arrangement and measured lower-COM correction supersede the corresponding relay-control assumptions in the 7 September wiring guide. It must not be used for motors, servos, pumps, valves, mains voltage or capstone hydraulic hardware.
 
 ## Physical evidence
 

@@ -48,6 +48,8 @@ Phase 3 is now validating the control and evidence architecture on a low-voltage
 - [Canonical Wave 1 wiring guide](docs/phase3/CertaRig_Wave_1_Wiring_and_Circuit_Guide_2026-09-07.pdf)
 - [Dual potentiometer evidence](phase3_evidence/2026-09-10_dual_pot_sweep/README.md)
 - [Next-stage E-stop SOP](docs/phase3/NEXT_STAGE_ESTOP_SOP.md)
+- [Corrected relay and indicator SOP](docs/phase3/NEXT_STAGE_RELAY_OUTPUT_SOP.md)
+- [Integrated bench fault-isolation evidence](phase3_evidence/2026-09-11_integrated_bench/README.md)
 
 ## Reproducible validation
 

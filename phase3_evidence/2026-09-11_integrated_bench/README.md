@@ -1,6 +1,6 @@
 # CertaRig integrated bench evidence - 11 September 2026
 
-Current result: **HOLD - first Gate 1 attempt aborted after absent red PWR indication**
+Current result: **HOLD - fault branch isolated and corrected; repeat S06/S08 before Gate 1 retry**
 
 Operator update on 11 September 2026: `K1 NO` is reported connected to breadboard `F14`. This resolves the previously missing connection in the reported topology, but acceptance remains on HOLD pending an updated photograph and the U21-U23 meter checks added to the register.
 
@@ -12,7 +12,11 @@ At 16:58 IST, the operator confirmed that the meter reads `0.02 kohm` both with 
 
 First Gate 1 attempt on 11 September 2026: the 1 A branch fuse was removed, both potentiometers were at zero/off, and the E-stop was reset before PWR IN was applied. The Pi answered one ICMP echo at `192.168.29.172`; mDNS did not resolve; SSH reached authentication but no authenticated session was opened. The operator then reported that the red PWR LED was not visible while the green ACT LED flashed irregularly. The test was immediately aborted, the pending SSH session was closed, and the operator disconnected PWR IN. Raspberry Pi documentation identifies an off or flickering red PWR LED on Pi 1-4 boards as an undervoltage indication. No relay-output test occurred.
 
-Post-abort no-short checks at 17:48 IST found no continuity beep from the Pi-side fuse-holder input to ground, but the pin-17 shared 3.3 V hub measured a confirmed `9 ohm` with a sustained beep and no `k` symbol. This is a Gate 0 failure and a plausible cause of the observed undervoltage. The leading hypothesis is that a potentiometer wiper, rather than a fixed end terminal, may be connected to the 3.3 V hub while the shaft is at its ground-side endpoint. The hub must be isolated and both potentiometer end-to-end paths reverified before another power attempt.
+Post-abort no-short checks at 17:48 IST found no continuity beep from the Pi-side fuse-holder input to ground, but the pin-17 shared 3.3 V hub measured a confirmed `9 ohm` with a sustained beep and no `k` symbol. This was a Gate 0 failure and a plausible cause of the observed undervoltage. A subsequent operator-performed isolation sequence reproduced the fault only when the physical-pin-17 branch was added to the relay lower/control COM terminal. Pi-only, pin25-to-A6, and pin16-to-A2 configurations retained a stable red PWR indication; adding pin17-to-lower-COM extinguished it; removing only that branch restored it. The earlier potentiometer-wiper hypothesis is therefore superseded by stronger isolation evidence, although S06 must still be repeated before power.
+
+The corrected wiring keeps physical pin 17 dedicated to P1 and P2. Relay lower/control COM is externally disconnected with S1 on COM-LOW. The control path is DC+ through NC2, DC- to common ground, CH1 to the BC547 collector, and CH2 unused. The module-specific trigger direction remains a measured commissioning item; it will be characterized with K1 contact COM and the transistor disconnected before the integrated output test.
+
+The isolation observations are operator-reported and preserved in `relay_com_isolation_diagnostic.csv`. They establish the wiring correction but do not by themselves authorize power. Required next evidence is an unpowered S06 repeat near the expected parallel-pot resistance, S08 open-circuit confirmation, and then the staged Gate 1 retry.
 
 ## Scope
 
