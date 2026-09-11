@@ -1,0 +1,2 @@
+attempt_id,timestamp_ist,configuration,network_result,ssh_result,pwr_led,act_led,relay_or_panel_observation,action,result,notes
+G1-A01,2026-09-11 17:39:11 IST,"Fuse removed; potentiometers zero/off; E-stop reset; PWR IN only","192.168.29.172 replied to one ping; certarig-pi.local did not resolve","Authentication prompt reached; session deliberately closed before authentication",not visible,irregular flashing,no output-stage test performed,"Immediate shutdown and PWR IN removal",ABORT-POWER-ANOMALY,"Diagnose supply versus attached GPIO load before retry"
