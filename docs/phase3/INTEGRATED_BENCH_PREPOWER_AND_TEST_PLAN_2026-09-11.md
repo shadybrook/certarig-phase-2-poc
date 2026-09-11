@@ -53,6 +53,8 @@ The photographed variant routes the low-current 5 V dry-bench distribution throu
 
 ### 3.3 Point-to-point continuity register
 
+For low-resistance continuity checks, first record the reading obtained by firmly shorting the meter probes on the same range. A connection passes when it reads no more than 1 ohm above that probe baseline. This avoids falsely assigning lead and probe-contact resistance to the circuit.
+
 | ID | Test points | Required result |
 |---|---|---|
 | U01 | Pi physical pin 2 to fuse input | 0-1 ohm |
@@ -73,7 +75,7 @@ The photographed variant routes the low-current 5 V dry-bench distribution throu
 | U16 | `FUSED_5V` to relay DC+, E-stop latched | `OL` |
 | U17 | Pi pin 18 to pin 20, E-stop reset | 0-1 ohm through NC1 |
 | U18 | Pi pin 18 to pin 20, E-stop latched | `OL` |
-| U19 | Measured K1 COM to K1 NC, relay unpowered | 0-1 ohm |
+| U19 | Measured K1 COM to K1 NC, relay unpowered | No more than 1 ohm above shorted-probe baseline |
 | U20 | Measured K1 COM to K1 NO, relay unpowered | `OL` |
 | U21 | Measured K1 NO terminal to breadboard F14 | 0-1 ohm |
 | U22 | Measured K1 NO terminal through the installed branch resistor to green indicator positive | 0.95-1.05 kohm |

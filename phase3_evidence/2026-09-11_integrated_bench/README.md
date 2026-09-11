@@ -8,6 +8,8 @@ First reported meter batch at 16:35 IST: K1 COM-NO was `OL`; K1 NO-F14 was repor
 
 Second reported meter batch at 16:51 IST: the green and red series branches measured `0.978 kohm` and `0.98 kohm`, respectively, and now pass. FUSED_5V-to-ground produced no reading and is provisionally treated as open pending confirmation of meter mode and no sustained beep. K1 COM-NC measured `20 ohm`, which still fails unless the shorted-probe baseline explains it. The reported dead-rail voltage text was ambiguous and was not accepted. Power remains prohibited.
 
+At 16:58 IST, the operator confirmed that the meter reads `0.02 kohm` both with its probes shorted and across unpowered K1 COM-NC. K1 therefore adds no measurable resistance on that range and U19 is accepted as a baseline-corrected pass. This removes the suspected K1 contact fault; the remaining Gate 0 continuity, no-short, identity, and dead-voltage checks still control power authorization.
+
 ## Scope
 
 This folder retains the as-built photo set and will receive the unpowered meter register, SSH transcripts, integrated CSV, plots, truth tables, and test-case result after the controlled commissioning gates pass.

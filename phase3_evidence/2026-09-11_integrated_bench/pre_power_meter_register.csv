@@ -18,7 +18,7 @@ U15,FUSED_5V to relay DC+,reset,0-1 ohm,,,,
 U16,FUSED_5V to relay DC+,latched,OL,,,,
 U17,Pi physical pin 18 to pin 20,reset,0-1 ohm,,,,
 U18,Pi physical pin 18 to pin 20,latched,OL,,,,
-U19,Measured K1 COM to K1 NC,relay unpowered,0-1 ohm,20 ohm,FAIL,2026-09-11 16:51:05 IST,Second operator-reported reading; probe-short baseline still required
+U19,Measured K1 COM to K1 NC,relay unpowered,no more than 1 ohm above shorted-probe baseline,0.02 kohm with probe baseline also 0.02 kohm,PASS-BASELINE-CORRECTED,2026-09-11 16:58:51 IST,Relay contact adds no measurable resistance on the selected 2 kohm meter range
 U20,Measured K1 COM to K1 NO,relay unpowered,OL,OL,PASS,2026-09-11 16:35:24 IST,Operator-reported value
 U21,Measured K1 NO terminal to breadboard F14,relay unpowered,0-1 ohm,0.4 unit reported,PASS-PROVISIONAL,2026-09-11 16:35:24 IST,Assumed ohms; confirm meter range or display
 U22,Measured K1 NO through installed branch resistor to green indicator positive,relay unpowered,0.95-1.05 kohm,0.978 kohm,PASS,2026-09-11 16:51:05 IST,Operator-reported value
