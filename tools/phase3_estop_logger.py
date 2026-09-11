@@ -68,7 +68,9 @@ def main() -> int:
                 elapsed = now - start
                 if args.duration and elapsed >= args.duration:
                     break
-                raw_high = bool(sensor.value)
+                # Read the electrical GPIO level. DigitalInputDevice.value is
+                # inverted by gpiozero when pull_up=True.
+                raw_high = bool(sensor.pin.state)
                 state = "active" if raw_high else "healthy"
                 writer.writerow(
                     [

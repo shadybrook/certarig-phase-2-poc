@@ -77,7 +77,10 @@ class RaspberryPiHardware(HardwareAdapter):
         self.force_safe_state()
 
     def emergency_stop_is_active(self) -> bool:
-        raw_high = bool(self.emergency_stop.value)
+        # DigitalInputDevice.value is a logical active/inactive value. With
+        # pull_up=True gpiozero treats a LOW input as active, so it is the
+        # inverse of the electrical level used by our fail-safe NC loop.
+        raw_high = bool(self.emergency_stop.pin.state)
         return raw_high if self.config.hardware.emergency_stop_active_high else not raw_high
 
     @staticmethod

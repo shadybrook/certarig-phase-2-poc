@@ -108,7 +108,9 @@ def main() -> int:
                 ]
             )
             while True:
-                raw_high = bool(estop.value)
+                # Read the electrical GPIO level. DigitalInputDevice.value is
+                # inverted by gpiozero when pull_up=True.
+                raw_high = bool(estop.pin.state)
                 observed = interlock.observe(raw_high)
                 if observed.event:
                     pending_event = observed.event

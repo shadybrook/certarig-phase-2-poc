@@ -42,7 +42,7 @@ See:
 
 ## Phase 3 dry-bench progress
 
-Phase 3 is now validating the control and evidence architecture on a low-voltage dry hardware bench. The Pi, SSH, I2C, ADS1115 at `0x48`, and two independent 0-3.3 V potentiometer input paths have physical evidence. Hydraulic commissioning remains reserved for the capstone.
+Phase 3 now validates the control and evidence architecture on a low-voltage dry hardware bench. The Pi, SSH, I2C, ADS1115 at `0x48`, two independent 0-3.3 V potentiometer paths, physical E-stop, transistor-driven K1 relay, red/green changeover indication, forced-safe trip and reset-required anti-restart have physical evidence. Hydraulic commissioning remains reserved for the capstone.
 
 - [Phase 3 document and evidence index](docs/phase3/README.md)
 - [Canonical Wave 1 wiring guide](docs/phase3/CertaRig_Wave_1_Wiring_and_Circuit_Guide_2026-09-07.pdf)
@@ -50,6 +50,9 @@ Phase 3 is now validating the control and evidence architecture on a low-voltage
 - [Next-stage E-stop SOP](docs/phase3/NEXT_STAGE_ESTOP_SOP.md)
 - [Corrected relay and indicator SOP](docs/phase3/NEXT_STAGE_RELAY_OUTPUT_SOP.md)
 - [Integrated bench fault-isolation evidence](phase3_evidence/2026-09-11_integrated_bench/README.md)
+- [Final Phase 3 as-built circuit diagram](docs/phase3/diagrams/CertaRig_Phase3_Final_AsBuilt_Circuit.png)
+- [Integrated relay, indicator and anti-restart evidence](phase3_evidence/2026-09-12_integrated_bench/README.md)
+- [Phase 3 completion plan](docs/phase3/PHASE3_COMPLETION_PLAN_2026-09-12.md)
 
 ## Reproducible validation
 
@@ -66,7 +69,7 @@ Or run each step:
     npm run build
     npm run evidence
 
-The repository contains six browser tests and fourteen supplementary reference software tests. GitHub Actions runs both suites after each published change. The website workflow publishes only the tested static files in the dist directory.
+The repository contains six browser tests and twenty supplementary reference software tests. GitHub Actions runs both suites after each published change. The website workflow publishes only the tested static files in the dist directory.
 
 Generated case evidence is stored in evidence/phase2. The evidence is deterministic, synthetic, and reproducible from src/engine.mjs.
 

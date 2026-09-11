@@ -1,7 +1,7 @@
 # CertaRig integrated bench pre-power review and evidence plan
 
 Document date: 11 September 2026
-Status: **HOLD - corrected relay control wiring; repeat the listed unpowered checks before power**
+Historical gate status: **SUPERSEDED BY PASS on 12 September 2026.** The listed unpowered checks were completed, the fuse-holder connector fault was repaired, and the integrated relay/indicator/E-stop truth table passed. See the [12 September evidence report](../../phase3_evidence/2026-09-12_integrated_bench/README.md).
 Scope: low-voltage Phase 3 dry bench only
 
 ## 1. Evidence and authority boundary

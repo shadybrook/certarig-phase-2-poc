@@ -4,6 +4,8 @@ Document date: 11 September 2026
 Revision: 1.2
 Scope: Phase 3 low-voltage dry bench only
 
+Commissioning status: **Passed on 12 September 2026.** This remains the construction and test SOP; the submission-facing canonical circuit is the [final as-built diagram](diagrams/CertaRig_Phase3_Final_AsBuilt_Circuit.png).
+
 ## 1. Purpose and controlled scope
 
 This SOP adds one physical output channel to the already verified CertaRig bench. GPIO23 commands relay channel 1 through a BC547B transistor. The second normally-closed E-stop contact removes power from the relay coil. The relay contacts select a red inhibited indicator or a green permitted indicator. Revision 1.1 recorded the as-built substitution of red for the originally planned yellow indicator. Revision 1.2 removes the former pin-17-to-relay-control-COM connection after the powered isolation test showed that branch collapsed the Pi power indication.
@@ -71,7 +73,7 @@ The two indicator resistors are protective current limiters. Keep them even if t
 | W29 | `FUSED_5V` | Direct wire | 100 uF capacitor positive | Red, `CAP_PLUS` |
 | W30 | 100 uF capacitor negative stripe | Ground distribution point | Pi physical pin 25 / GND | Black, `CAP_MINUS` |
 
-[Open the full-size single-rail wiring diagram](diagrams/CertaRig_Relay_Output_Single_Rail_Wiring.svg).
+[Open the final full-system as-built diagram](diagrams/CertaRig_Phase3_Final_AsBuilt_Circuit.png). The earlier [single-rail relay subsystem diagram](diagrams/CertaRig_Relay_Output_Single_Rail_Wiring.svg) is retained for detailed relay-stage reference.
 
 ## 4. Actual relay-module map from the supplied close-ups
 
