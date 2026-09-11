@@ -39,7 +39,7 @@ Do not move any of these wires. Physical pin 16 is GPIO23, not ground. Physical 
 | Boot-safe pull-down | 10 kohm from BC547B base to emitter |
 | Control ground | Pi physical pin 25 / GND -> breadboard ground rail -> BC547B emitter |
 | Relay trigger | BC547B collector -> relay `CH1 / IN1` |
-| Trigger reference | Existing Pi 3.3 V distribution -> relay control `COM` |
+| Trigger reference | Shared Pi 3.3 V distribution hub -> relay control `COM` |
 | Relay power source | Pi physical pin 2 / 5V -> 1 A fuse -> fused 5 V node |
 | Hardwired inhibit | Fused 5 V node -> E-stop `NC2-A` -> `NC2-B` -> relay `DC+ / VCC` |
 | Relay power return | Relay `DC- / GND` -> common ground node |
@@ -58,7 +58,7 @@ The two indicator resistors are protective current limiters. Keep them even if t
 | W16 | BC547B base | 10 kohm pull-down | BC547B emitter | Label `B-E 10K` |
 | W17 | Pi physical pin 25 / GND | Ground distribution point | BC547B emitter | Black, `0V` |
 | W18 | BC547B collector | Direct signal wire | Relay `CH1 / IN1` | Green, `CH1` |
-| W19 | Existing physical-pin-17 distribution | Control 3.3 V rail | Relay trigger-side `COM` | Red or purple, `CTRL_3V3` |
+| W19 | Shared `CONTROL_3V3` hub sourced by one wire from physical pin 17 | Direct branch wire | Relay trigger-side `COM` | Red or purple, `CTRL_3V3` |
 | W20 | Pi physical pin 2 / 5V | Direct wire | 1 A fuse-holder input | Red, `PI_5V` |
 | W21 | Fuse-holder output | Distribution splice | `FUSED_5V` node | Red, `FUSED_5V` |
 | W22 | `FUSED_5V` | Direct wire | E-stop `NC2-A` | Red, `NC2_IN` |
@@ -96,6 +96,18 @@ The six large contact screws are printed in two groups of:
 Use only the group belonging to relay `K1`. Confirm K1 by the PCB marking and by the unpowered continuity test in Gate C; do not choose a group only because it appears upper or lower in a photograph.
 
 For channel 1, fit the S1 jumper across the pins marked `LOW` and `COM`. Leave CH2 unconnected. The trigger-side `COM` screw is the reference for the optocoupler input; for this low-trigger transistor interface it connects to the Pi 3.3 V control rail. It is not either of the K1/K2 contact `COM` screws.
+
+### 4.1 Physical pin 17 distribution clarification
+
+Physical pin 17 already supplies both verified potentiometers. Do not stack another connector or loose wire directly onto that occupied Pi header pin. Pin 17 must have one outgoing conductor to a shared `CONTROL_3V3` distribution hub. The hub then provides three parallel branches:
+
+1. Potentiometer P1 high terminal.
+2. Potentiometer P2 high terminal.
+3. Relay trigger-side `COM` reference.
+
+Use the breadboard positive rail or a suitably rated common terminal/lever connector as the hub. If the existing splitter has only two outputs and no safe third connection, shut down and unplug the Pi, then replace or rebuild it as a one-input/three-output distribution point. Do not use another GPIO as a power source. Physical pin 1 is the same 3.3 V rail but is already assigned to ADS1115 VDD, so moving the relay reference there provides no electrical advantage.
+
+The two potentiometers draw less than 1 mA together. The relay trigger reference feeds only the optocoupler input, not the 5 V relay coils; the coils remain powered through `DC+` from the fused 5 V branch. The trigger connection must still be verified during the staged low-voltage test before normal operation.
 
 ## 5. Parts required
 
@@ -208,15 +220,17 @@ The breadboard is used only for the transistor and its low-current resistors. Do
 1. Use the multimeter to map the MB102 rails. Some long power rails are split in the middle.
 2. Select one rail as `CONTROL 3V3` and another as `CONTROL GND`.
 3. Connect Pi physical pin 25 to the `CONTROL GND` rail.
-4. Connect the existing 3.3 V distribution node from physical pin 17 to the `CONTROL 3V3` rail without disturbing either potentiometer.
-5. Insert the BC547B so collector, base, and emitter occupy three electrically separate breadboard rows.
-6. Keep the flat face visible and label the rows `C`, `B`, and `E`.
-7. Connect the emitter row to `CONTROL GND`.
-8. Connect a 10 kohm resistor from the base row to the emitter row.
-9. Connect Pi physical pin 16 / GPIO23 through the measured 1 kohm resistor to the base row.
-10. Connect the collector row to relay `CH1 / IN1`.
-11. Connect relay trigger-side `COM` to `CONTROL 3V3`.
-12. Leave `CH2 / IN2` empty.
+4. Inspect the existing physical-pin-17 splitter. If it has only the two occupied potentiometer outputs, replace it while the Pi is unplugged with a shared hub that has at least three outputs.
+5. Connect one wire from physical pin 17 to the `CONTROL 3V3` hub or breadboard rail.
+6. Connect P1 high, P2 high, and relay trigger-side `COM` as three separate parallel branches from that hub. Do not place multiple loose connectors directly on pin 17.
+7. Insert the BC547B so collector, base, and emitter occupy three electrically separate breadboard rows.
+8. Keep the flat face visible and label the rows `C`, `B`, and `E`.
+9. Connect the emitter row to `CONTROL GND`.
+10. Connect a 10 kohm resistor from the base row to the emitter row.
+11. Connect Pi physical pin 16 / GPIO23 through the measured 1 kohm resistor to the base row.
+12. Connect the collector row to relay `CH1 / IN1`.
+13. Confirm relay trigger-side `COM` is connected to the shared `CONTROL 3V3` hub.
+14. Leave `CH2 / IN2` empty.
 
 Breadboard rule: holes in one five-hole strip are connected. No two transistor leads may share the same strip.
 

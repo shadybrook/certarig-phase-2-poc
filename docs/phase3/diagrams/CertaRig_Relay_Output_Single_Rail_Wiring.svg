@@ -15,7 +15,7 @@
   <text x="100" y="195" class="h">Raspberry Pi 3 A+</text>
   <text x="100" y="245" class="t">Pin 2  = 5 V rail</text>
   <text x="100" y="300" class="t">Pin 16 = GPIO23 command</text>
-  <text x="100" y="355" class="t">Pin 17 = 3.3 V distribution</text>
+  <text x="100" y="355" class="t">Pin 17 = one wire to 3.3 V hub</text>
   <text x="100" y="410" class="t">Pin 18 = GPIO24 / NC1</text>
   <text x="100" y="465" class="t">Pin 20 = GND / NC1</text>
   <text x="100" y="520" class="t">Pin 22 = GPIO25 — EMPTY</text>
@@ -29,6 +29,11 @@
   <text x="530" y="335" class="t">BC547B: C → CH1</text>
   <text x="530" y="380" class="t">E → common GND</text>
   <text x="530" y="425" class="s">Face forward: C–B–E; meter-verify</text>
+
+  <rect x="500" y="500" width="450" height="150" class="box" fill="#f3e8ff"/>
+  <text x="530" y="542" class="h">Shared CONTROL_3V3 hub</text>
+  <text x="530" y="580" class="t">One input only: Pi physical pin 17</text>
+  <text x="530" y="615" class="s">Parallel outputs: P1 + • P2 + • relay trigger COM</text>
 
   <rect x="1020" y="140" width="500" height="470" class="box" fill="#fff5d6"/>
   <text x="1050" y="185" class="h">5 V relay module</text>
@@ -68,7 +73,8 @@
 
   <path d="M400 300 H500" class="sig" marker-end="url(#arrowGreen)"/>
   <path d="M860 330 H1020" class="sig" marker-end="url(#arrowGreen)"/>
-  <path d="M400 355 H930 V390 H1020" class="wire3"/>
+  <path d="M400 355 H455 V575 H500" class="wire3"/>
+  <path d="M950 575 H980 V390 H1020" class="wire3"/>
   <path d="M400 575 H440 V1040" class="gnd"/>
   <path d="M860 380 H900 V1040" class="gnd"/>
   <path d="M1520 270 H1580 V1040" class="gnd"/>
@@ -82,5 +88,5 @@
   <path d="M1350 885 H1410" class="contact"/>
   <path d="M1570 965 V1040" class="gnd"/>
 
-  <text x="70" y="1085" class="warn">Never connect mains or an external 5 V source. Physical pin 22 stays empty. Verify every terminal with the meter before fitting the fuse.</text>
+  <text x="70" y="1085" class="warn">Never stack wires on pin 17: use one wire to the shared hub. Never connect mains or an external 5 V source. Pin 22 stays empty.</text>
 </svg>
