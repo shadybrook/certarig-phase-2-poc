@@ -28,3 +28,5 @@ S02,Pi 3.3 V hub to Pi 5 V,latched fuse removed,no continuity beep,,,,
 S03,Pi physical pin 16 GPIO23 to Pi 5 V,latched fuse removed,no continuity beep,,,,
 S04,BC547B collector to emitter,latched fuse removed,no sustained continuity beep,,,,
 S05,E-stop NC1 pair to NC2 pair,latched fuse removed,no cross-continuity,,,,
+S06,Shared pin 17 3.3 V hub to common ground,latched fuse removed,"no sustained beep; about 4.5 kohm after relay trigger COM is isolated",6.7 ohm with sustained beep,FAIL,2026-09-11 17:47:39 IST,Possible potentiometer wiper-to-3.3 V miswire; isolate hub before power
+S07,Pi-side fuse-holder input to common ground,latched fuse removed,no sustained continuity beep,displayed 1-1.2 V in continuity mode with no beep,PASS-PROVISIONAL,2026-09-11 17:47:39 IST,Display appears to be continuity or diode-test voltage; repeat in resistance mode later

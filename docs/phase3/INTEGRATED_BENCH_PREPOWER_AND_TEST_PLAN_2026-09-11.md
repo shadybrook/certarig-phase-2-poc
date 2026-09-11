@@ -92,8 +92,12 @@ With the E-stop latched and fuse removed:
 | S03 | Pi physical pin 16 / GPIO23 to Pi 5 V | No continuity beep |
 | S04 | BC547B collector to emitter | No sustained continuity beep |
 | S05 | E-stop NC1 pair to NC2 pair | No cross-continuity |
+| S06 | Shared pin-17 3.3 V hub to common ground | No sustained continuity beep; after isolating relay trigger COM, approximately 4.5 kohm is expected from the measured 10 kohm and 8.4 kohm potentiometer tracks in parallel |
+| S07 | Pi-side fuse-holder input to common ground | No sustained continuity beep |
 
 Any failure keeps the status at HOLD. Do not install the fuse or power the Pi.
+
+If S06 is low resistance, disconnect the pin-17 source wire and relay trigger COM from the hub while power remains removed. Verify each potentiometer only across its two fixed end terminals: P1 should remain approximately 10 kohm and P2 approximately 8.4 kohm throughout shaft travel. The wiper must connect only to ADS1115 A0 or A1; it must not be used as the shared 3.3 V feed.
 
 ## 4. Gate 1: Pi-only baseline, fuse removed
 

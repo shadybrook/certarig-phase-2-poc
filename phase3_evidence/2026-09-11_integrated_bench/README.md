@@ -12,6 +12,8 @@ At 16:58 IST, the operator confirmed that the meter reads `0.02 kohm` both with 
 
 First Gate 1 attempt on 11 September 2026: the 1 A branch fuse was removed, both potentiometers were at zero/off, and the E-stop was reset before PWR IN was applied. The Pi answered one ICMP echo at `192.168.29.172`; mDNS did not resolve; SSH reached authentication but no authenticated session was opened. The operator then reported that the red PWR LED was not visible while the green ACT LED flashed irregularly. The test was immediately aborted, the pending SSH session was closed, and the operator disconnected PWR IN. Raspberry Pi documentation identifies an off or flickering red PWR LED on Pi 1-4 boards as an undervoltage indication. No relay-output test occurred.
 
+Post-abort no-short checks at 17:47 IST found no continuity beep from the Pi-side fuse-holder input to ground, but the reported pin-17 shared 3.3 V hub measurement produced a sustained beep and `6.7 ohm`. This is a Gate 0 failure and a plausible cause of the observed undervoltage. The leading hypothesis is that a potentiometer wiper, rather than a fixed end terminal, may be connected to the 3.3 V hub while the shaft is at its ground-side endpoint. The hub must be isolated and both potentiometer end-to-end paths reverified before another power attempt.
+
 ## Scope
 
 This folder retains the as-built photo set and will receive the unpowered meter register, SSH transcripts, integrated CSV, plots, truth tables, and test-case result after the controlled commissioning gates pass.
