@@ -81,10 +81,10 @@
 
   <rect x="1410" y="700" width="320" height="265" class="box" fill="#e9f9ef"/>
   <text x="1440" y="745" class="h">K1 indicators</text>
-  <text x="1440" y="795" class="t">NC → 1 kΩ → Yellow +</text>
+  <text x="1440" y="795" class="t">NC → 1 kΩ → Red +</text>
   <text x="1440" y="840" class="t">NO → 1 kΩ → Green +</text>
   <text x="1440" y="885" class="t">Both − → common GND</text>
-  <text x="1440" y="930" class="s">Yellow = inhibited / safe output</text>
+  <text x="1440" y="930" class="s">Red = inhibited / safe output</text>
   <path d="M1350 885 H1410" class="contact"/>
   <path d="M1570 965 V1040" class="gnd"/>
 

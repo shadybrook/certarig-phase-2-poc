@@ -1,12 +1,12 @@
 # CertaRig next-stage SOP: fail-safe relay and indicator output
 
 Document date: 10 September 2026  
-Revision: 1.0  
+Revision: 1.1
 Scope: Phase 3 low-voltage dry bench only
 
 ## 1. Purpose and controlled scope
 
-This SOP adds one physical output channel to the already verified CertaRig bench. GPIO23 commands relay channel 1 through a BC547B transistor. The second normally-closed E-stop contact removes power from the relay coil. The relay contacts select a yellow inhibited indicator or a green permitted indicator.
+This SOP adds one physical output channel to the already verified CertaRig bench. GPIO23 commands relay channel 1 through a BC547B transistor. The second normally-closed E-stop contact removes power from the relay coil. The relay contacts select a red inhibited indicator or a green permitted indicator. Revision 1.1 records the as-built substitution of red for the originally planned yellow indicator; the electrical function is unchanged.
 
 This stage uses only the Raspberry Pi power-input rail and low-voltage indicators. Do not connect mains voltage, a pump, a solenoid, a servo, water, or any pressure-bearing equipment.
 
@@ -44,7 +44,7 @@ Do not move any of these wires. Physical pin 16 is GPIO23, not ground. Physical 
 | Hardwired inhibit | Fused 5 V node -> E-stop `NC2-A` -> `NC2-B` -> relay `DC+ / VCC` |
 | Relay power return | Relay `DC- / GND` -> common ground node |
 | Bulk decoupling | 100 uF capacitor from fused 5 V node to common ground, before NC2 |
-| Yellow state | Fused 5 V node -> relay K1 `COM` -> K1 `NC` -> 1 kohm -> yellow indicator positive |
+| Red state | Fused 5 V node -> relay K1 `COM` -> K1 `NC` -> 1 kohm -> red indicator positive |
 | Green state | Relay K1 `NO` -> 1 kohm -> green indicator positive |
 | Indicator return | Both indicator negative leads -> common ground node |
 
@@ -65,7 +65,7 @@ The two indicator resistors are protective current limiters. Keep them even if t
 | W23 | E-stop `NC2-B` | Direct wire | Relay `DC+ / VCC` | Red, `RELAY_5V` |
 | W24 | Common ground | Direct wire | Relay `DC- / GND` | Black, `RELAY_0V` |
 | W25 | `FUSED_5V` | Direct wire | K1 contact `COM` | Red, `K1_COM_5V` |
-| W26 | K1 contact `NC` | 1 kohm indicator resistor | Yellow indicator positive | Yellow, `SAFE` |
+| W26 | K1 contact `NC` | 1 kohm indicator resistor | Red indicator positive | Red, `SAFE` |
 | W27 | K1 contact `NO` | 1 kohm indicator resistor | Green indicator positive | Green, `PERMIT` |
 | W28 | Both indicator negative leads | Ground distribution point | Pi physical pin 25 / GND | Black, `IND_0V` |
 | W29 | `FUSED_5V` | Direct wire | 100 uF capacitor positive | Red, `CAP_PLUS` |
@@ -119,7 +119,7 @@ The two potentiometers draw less than 1 mA together. The relay trigger reference
 - Two additional 1 kohm resistors for the panel indicators
 - One 1 A fast-acting fuse and holder
 - One 100 uF electrolytic capacitor rated 25 V or higher
-- Green and yellow 3-9 V panel indicators
+- Green and red 3-9 V panel indicators
 - E-stop NC2 contact pair already identified and labelled
 - MB102 breadboard for the transistor and low-current control connections
 - Dupont wires for signal wiring and 24 AWG wire for the fused 5 V and indicator wiring
@@ -154,7 +154,7 @@ Measure each resistor out of circuit:
 |---|---:|---:|
 | GPIO23 to base | 1 kohm | 0.95-1.05 kohm |
 | Base to emitter | 10 kohm | 9.5-10.5 kohm |
-| Yellow indicator limiter | 1 kohm | 0.95-1.05 kohm |
+| Red indicator limiter | 1 kohm | 0.95-1.05 kohm |
 | Green indicator limiter | 1 kohm | 0.95-1.05 kohm |
 
 Label them before inserting them into the breadboard.
@@ -246,7 +246,7 @@ Use secure screw terminals, lever connectors, or insulated splices for this bran
 6. Connect `NC2-B` to relay `DC+ / VCC`.
 7. Connect relay `DC- / GND` to the common ground node.
 8. Connect `FUSED_5V` to K1 contact `COM`.
-9. Connect K1 `NC` through a 1 kohm resistor to the yellow indicator positive lead.
+9. Connect K1 `NC` through a 1 kohm resistor to the red indicator positive lead.
 10. Connect K1 `NO` through a 1 kohm resistor to the green indicator positive lead.
 11. Connect both indicator negative leads to the common ground node.
 12. Insulate every exposed conductor.
@@ -320,7 +320,7 @@ The preferred result is `throttled=0x0`.
 8. Reset the E-stop.
 9. Measure relay `DC+` to ground; accept 4.75-5.25 V.
 10. Confirm the relay remains de-energized while GPIO23 is LOW.
-11. Confirm yellow is on and green is off.
+11. Confirm red is on and green is off.
 12. Run `vcgencmd get_throttled` again; the preferred result remains `0x0`.
 
 Stop immediately if the Pi resets, an undervoltage warning appears, the measured 5 V rail is below 4.75 V, the wrong indicator lights, the relay activates without a command, a wire becomes warm, or there is smell or smoke.
@@ -331,7 +331,7 @@ The command test will be run through SSH with a purpose-built logger so each tra
 
 Expected behaviour:
 
-| State | GPIO23 command | E-stop NC2 | Relay K1 | Yellow | Green |
+| State | GPIO23 command | E-stop NC2 | Relay K1 | Red | Green |
 |---|---|---|---|---|---|
 | Boot or safe command | LOW | Closed | De-energized | On | Off |
 | Valid permit | HIGH | Closed | Energized | Off | On |
