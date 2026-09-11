@@ -25,7 +25,7 @@ Observed in the photographs:
 - Raspberry Pi 3 Model A+, ADS1115, two potentiometers, dual-NC E-stop, BC547B interface area, relay module, 100 uF capacitor, glass fuse holder, and two panel indicators are present.
 - ADS1115 A0/A1 and the previously verified Pi connections appear to remain installed.
 - The relay low-voltage block appears populated for DC+, DC-, CH1, and trigger COM, with CH2 apparently unused; cable colours do not certify identity.
-- Only two wires are clearly visible on one three-screw relay contact group. A red/green changeover requires three independently verified K1 wires: K1 COM, K1 NC, and K1 NO. Resolve this before power.
+- In the earlier photographs, only two wires were clearly visible on one three-screw relay contact group. The operator subsequently reported that `K1 NO` was connected to breadboard `F14`. An updated photograph and the U21-U23 continuity results are still required before this is accepted electrically.
 - The S1 `LOW-COM` jumper position, fuse rating, capacitor polarity stripe, transistor C-B-E rows, indicator polarity, and hidden breadboard strips are not legible enough to approve from the photographs.
 - The inhibited indicator is red in the as-built bench, replacing the yellow indicator named in the earlier design. Its function is unchanged.
 
@@ -75,6 +75,9 @@ The photographed variant routes the low-current 5 V dry-bench distribution throu
 | U18 | Pi pin 18 to pin 20, E-stop latched | `OL` |
 | U19 | Measured K1 COM to K1 NC, relay unpowered | 0-1 ohm |
 | U20 | Measured K1 COM to K1 NO, relay unpowered | `OL` |
+| U21 | Measured K1 NO terminal to breadboard F14 | 0-1 ohm |
+| U22 | Measured K1 NO terminal through the installed branch resistor to green indicator positive | 0.95-1.05 kohm |
+| U23 | Measured K1 NC terminal through the installed branch resistor to red indicator positive | 0.95-1.05 kohm |
 
 ### 3.4 No-short register
 

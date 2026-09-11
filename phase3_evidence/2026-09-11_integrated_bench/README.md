@@ -2,6 +2,8 @@
 
 Current result: **HOLD - pre-power meter acceptance incomplete**
 
+Operator update on 11 September 2026: `K1 NO` is reported connected to breadboard `F14`. This resolves the previously missing connection in the reported topology, but acceptance remains on HOLD pending an updated photograph and the U21-U23 meter checks added to the register.
+
 ## Scope
 
 This folder retains the as-built photo set and will receive the unpowered meter register, SSH transcripts, integrated CSV, plots, truth tables, and test-case result after the controlled commissioning gates pass.
