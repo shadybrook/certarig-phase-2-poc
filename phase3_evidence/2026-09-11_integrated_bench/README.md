@@ -6,6 +6,8 @@ Operator update on 11 September 2026: `K1 NO` is reported connected to breadboar
 
 First reported meter batch at 16:35 IST: K1 COM-NO was `OL`; K1 NO-F14 was reported as `0.4`; K1 COM-NC was reported as `12 ohm`; the two resistor-path readings were reported as `0.9` and `0.4` without displayed units; and the FUSED_5V-to-ground result could not be determined. The latter results are failed or inconclusive, so no power authorization was issued. Both potentiometers are to remain at their zero/off positions through Gate 1.
 
+Second reported meter batch at 16:51 IST: the green and red series branches measured `0.978 kohm` and `0.98 kohm`, respectively, and now pass. FUSED_5V-to-ground produced no reading and is provisionally treated as open pending confirmation of meter mode and no sustained beep. K1 COM-NC measured `20 ohm`, which still fails unless the shorted-probe baseline explains it. The reported dead-rail voltage text was ambiguous and was not accepted. Power remains prohibited.
+
 ## Scope
 
 This folder retains the as-built photo set and will receive the unpowered meter register, SSH transcripts, integrated CSV, plots, truth tables, and test-case result after the controlled commissioning gates pass.

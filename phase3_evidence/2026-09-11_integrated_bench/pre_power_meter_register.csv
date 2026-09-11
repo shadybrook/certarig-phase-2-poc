@@ -18,12 +18,12 @@ U15,FUSED_5V to relay DC+,reset,0-1 ohm,,,,
 U16,FUSED_5V to relay DC+,latched,OL,,,,
 U17,Pi physical pin 18 to pin 20,reset,0-1 ohm,,,,
 U18,Pi physical pin 18 to pin 20,latched,OL,,,,
-U19,Measured K1 COM to K1 NC,relay unpowered,0-1 ohm,12 ohm,FAIL,2026-09-11 16:35:24 IST,Operator-reported value; repeat after shorting probes and recording lead resistance
+U19,Measured K1 COM to K1 NC,relay unpowered,0-1 ohm,20 ohm,FAIL,2026-09-11 16:51:05 IST,Second operator-reported reading; probe-short baseline still required
 U20,Measured K1 COM to K1 NO,relay unpowered,OL,OL,PASS,2026-09-11 16:35:24 IST,Operator-reported value
 U21,Measured K1 NO terminal to breadboard F14,relay unpowered,0-1 ohm,0.4 unit reported,PASS-PROVISIONAL,2026-09-11 16:35:24 IST,Assumed ohms; confirm meter range or display
-U22,Measured K1 NO through installed branch resistor to green indicator positive,relay unpowered,0.95-1.05 kohm,0.9 unit reported,INCONCLUSIVE,2026-09-11 16:35:24 IST,Meter unit and exact display not supplied
-U23,Measured K1 NC through installed branch resistor to red indicator positive,relay unpowered,0.95-1.05 kohm,0.4 unit reported,FAIL-OR-WRONG-TEST-POINT,2026-09-11 16:35:24 IST,A near-zero reading does not include the required series resistor; repeat at red indicator positive after the resistor
-S01,FUSED_5V to common ground,latched fuse removed,no sustained continuity beep,unable to determine,INCONCLUSIVE,2026-09-11 16:35:24 IST,Must be resolved before power
+U22,Measured K1 NO through installed branch resistor to green indicator positive,relay unpowered,0.95-1.05 kohm,0.978 kohm,PASS,2026-09-11 16:51:05 IST,Operator-reported value
+U23,Measured K1 NC through installed branch resistor to red indicator positive,relay unpowered,0.95-1.05 kohm,0.98 kohm,PASS,2026-09-11 16:51:05 IST,Operator-reported value
+S01,FUSED_5V to common ground,latched fuse removed,no sustained continuity beep,no reading reported,PASS-PROVISIONAL,2026-09-11 16:51:05 IST,Treat as OL only if measured in continuity or resistance mode with no sustained beep
 S02,Pi 3.3 V hub to Pi 5 V,latched fuse removed,no continuity beep,,,,
 S03,Pi physical pin 16 GPIO23 to Pi 5 V,latched fuse removed,no continuity beep,,,,
 S04,BC547B collector to emitter,latched fuse removed,no sustained continuity beep,,,,
