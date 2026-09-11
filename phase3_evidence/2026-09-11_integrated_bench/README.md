@@ -4,6 +4,8 @@ Current result: **HOLD - pre-power meter acceptance incomplete**
 
 Operator update on 11 September 2026: `K1 NO` is reported connected to breadboard `F14`. This resolves the previously missing connection in the reported topology, but acceptance remains on HOLD pending an updated photograph and the U21-U23 meter checks added to the register.
 
+First reported meter batch at 16:35 IST: K1 COM-NO was `OL`; K1 NO-F14 was reported as `0.4`; K1 COM-NC was reported as `12 ohm`; the two resistor-path readings were reported as `0.9` and `0.4` without displayed units; and the FUSED_5V-to-ground result could not be determined. The latter results are failed or inconclusive, so no power authorization was issued. Both potentiometers are to remain at their zero/off positions through Gate 1.
+
 ## Scope
 
 This folder retains the as-built photo set and will receive the unpowered meter register, SSH transcripts, integrated CSV, plots, truth tables, and test-case result after the controlled commissioning gates pass.
