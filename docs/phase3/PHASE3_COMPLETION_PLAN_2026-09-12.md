@@ -19,7 +19,7 @@ Completed:
 - Red/green K1 changeover indication
 - Three repeatable permit/safe cycles
 - E-stop during permit, forced-safe response and reset-required anti-restart
-- Automated software check with 6 JavaScript tests and 20 Python tests
+- Automated software check with 6 JavaScript tests and 30 Python tests
 - WP1 circuit freeze and photographic record confirmed by the operator; five labelled pre-power photographs are versioned in the repository
 - WP2 final as-built circuit diagram completed in SVG, PNG and PDF formats
 

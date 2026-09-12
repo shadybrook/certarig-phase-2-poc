@@ -44,7 +44,7 @@ Run the complete local validation:
 
     npm run check
 
-This command runs six browser engine tests, eight reference software tests, the static website build, and deterministic generation of the four Phase 2 evidence bundles.
+This command runs six browser engine tests, thirty reference software tests, the static website build, and deterministic generation of the four Phase 2 evidence bundles.
 
 GitHub Actions is configured to repeat the tests and website build after every published change. GitHub Pages is configured to publish the tested static artifact from the default branch. The dated local result is recorded in docs/VALIDATION_RECORD.md.
 

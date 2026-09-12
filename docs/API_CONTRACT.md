@@ -97,3 +97,21 @@ All responses include Cache-Control: no-store. The reference service binds to lo
 ## Authority boundary
 
 An optional AI proposer may return a typed plan proposal. It cannot approve a plan, execute a run, request GPIO output, change a safety limit, or bypass server validation. Human approval and deterministic execution remain separate.
+
+## Phase 3 live bench extension
+
+Run `certarig-edge live-dashboard` to serve the existing website together with the live bench console. The extension continuously samples required channels and owns GPIO23 through a fail-safe process guardrail.
+
+| Method | Route | Purpose |
+|---|---|---|
+| GET | `/v1/live/state` | Latest P1/P2, E-stop, guardrail, output model, recording state and rolling history |
+| POST | `/v1/live/commands/safe` | Force GPIO23 LOW |
+| POST | `/v1/live/commands/reset` | Clear a trip only while E-stop and all required channels are healthy |
+| POST | `/v1/live/commands/permit` | Request output only after a successful reset |
+| POST | `/v1/live/recordings/start` | Start a timestamped CSV evidence file |
+| POST | `/v1/live/recordings/stop` | Close the CSV and return its SHA256 checksum |
+| GET | `/v1/live/recordings/latest.csv` | Download the active or last completed CSV |
+
+All command, recording and download routes require the operator header. The browser keeps the operator key only in the unsaved password field. Pressure above 4.2 bar, flow above 15 L/min, missing or invalid required data, E-stop activation, output-driver errors and sampling errors force a latched safe state. Returning to a safe sensor value never restarts the relay; reset and permit are required again.
+
+The current circuit has no relay feedback input. Therefore `relay_energized_expected`, `red_indicator_expected` and `green_indicator_expected` are command/contact-model values, not independent physical measurements.

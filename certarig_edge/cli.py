@@ -60,6 +60,47 @@ def serve(args: argparse.Namespace) -> None:
         app.close()
 
 
+def live_dashboard(args: argparse.Namespace) -> None:
+    from .live import LiveBenchRuntime, make_live_server
+
+    operator_key = os.environ.get("CERTARIG_OPERATOR_KEY", "")
+    if len(operator_key) < 12:
+        raise SystemExit("CERTARIG_OPERATOR_KEY must be set to at least 12 characters")
+    config = load_config(args.config)
+    hardware = _build_hardware(config)
+    actuation_enabled = os.environ.get("CERTARIG_ENABLE_ACTUATION") == "1"
+    runtime = LiveBenchRuntime(
+        config=config,
+        hardware=hardware,
+        evidence_dir=args.evidence_dir,
+        allow_output=actuation_enabled or config.hardware.mode == "mock",
+    )
+    static_root = Path(args.static_root).resolve()
+    server = make_live_server(runtime, operator_key, static_root, args.bind, args.port)
+    runtime.start()
+    print(
+        json.dumps(
+            {
+                "event": "certarig_live_dashboard_started",
+                "url": f"http://{args.bind}:{server.server_port}/#live-bench",
+                "rig_id": config.rig_id,
+                "hardware_mode": config.hardware.mode,
+                "actuation_enabled": runtime.allow_output,
+                "config_hash": config.config_hash,
+                "evidence_dir": str(Path(args.evidence_dir).resolve()),
+            },
+            indent=2,
+        )
+    )
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+        runtime.close()
+
+
 def demo(args: argparse.Namespace) -> None:
     operator_key = os.environ.get("CERTARIG_OPERATOR_KEY")
     client = CertaRigClient(args.url, operator_key)
@@ -100,6 +141,17 @@ def build_parser() -> argparse.ArgumentParser:
     serve_parser.add_argument("--bind", default="127.0.0.1")
     serve_parser.add_argument("--port", type=int, default=8080)
     serve_parser.set_defaults(handler=serve)
+
+    live_parser = subparsers.add_parser(
+        "live-dashboard",
+        help="run the Pi-hosted Phase 3 live dashboard, guardrail, and CSV recorder",
+    )
+    live_parser.add_argument("--config", default="config/rig.wave1.json")
+    live_parser.add_argument("--evidence-dir", default="phase3_evidence/live_runs")
+    live_parser.add_argument("--static-root", default=".")
+    live_parser.add_argument("--bind", default="127.0.0.1")
+    live_parser.add_argument("--port", type=int, default=8080)
+    live_parser.set_defaults(handler=live_dashboard)
 
     demo_parser = subparsers.add_parser("demo", help="run the computer side API workflow")
     demo_parser.add_argument("--url", default="http://127.0.0.1:8080")

@@ -42,6 +42,7 @@ The relay-output SOP revision 1.2 is the controlled Phase 3 instruction for the 
 - [Integrated bench pre-power evidence](../../phase3_evidence/2026-09-11_integrated_bench/README.md)
 - [Integrated relay, indicator and anti-restart evidence](../../phase3_evidence/2026-09-12_integrated_bench/README.md)
 - [Phase 3 completion plan](PHASE3_COMPLETION_PLAN_2026-09-12.md)
+- [Live dashboard and sensor-guardrail SOP](LIVE_GUARDRAIL_DASHBOARD_SOP.md)
 
 ## Canonical physical pins
 

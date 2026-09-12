@@ -31,7 +31,7 @@ The optional MCP server exposes only snapshot, proposal, and evidence review ope
 On the Raspberry Pi I copy the example configuration, set a strong operator key, and start the edge service:
 
     export CERTARIG_OPERATOR_KEY='replace-with-a-strong-key'
-    python3 -m certarig_edge.cli serve --host 127.0.0.1 --port 8765
+    python3 -m certarig_edge.cli serve --bind 127.0.0.1 --port 8765
 
 From a computer I can inspect the rig and exercise the complete API workflow against the safe mock adapter:
 

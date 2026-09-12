@@ -14,8 +14,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from certarig_edge.commissioning import DryBenchInterlock
+from certarig_edge.commissioning import ProcessGuardrail
+from certarig_edge.config import load_config
 from certarig_edge.hardware.raspberry_pi import ADS1115Reader
+from certarig_edge.models import RigSnapshot, Sample
 
 
 def parse_args() -> argparse.Namespace:
@@ -50,6 +52,7 @@ def main() -> int:
         raise SystemExit("--allow-output requires --acknowledge-dry-bench")
 
     config = json.loads(args.config.read_text(encoding="utf-8"))
+    rig_config = load_config(args.config)
     hardware = config["hardware"]
     channels = {int(item["adc_channel"]): item for item in config["channels"]}
     if int(hardware["valve_output_gpio"]) != 23:
@@ -70,7 +73,7 @@ def main() -> int:
     output = OutputDevice(23, active_high=True, initial_value=False)
     estop = DigitalInputDevice(24, pull_up=True, bounce_time=0.02)
     adc = ADS1115Reader(int(hardware["i2c_bus"]), int(hardware["ads1115_address"]))
-    interlock = DryBenchInterlock(allow_output=args.allow_output)
+    interlock = ProcessGuardrail(rig_config, allow_output=args.allow_output)
     phase = "boot_safe"
     interval = 1.0 / args.rate
     started = time.monotonic()
@@ -99,11 +102,15 @@ def main() -> int:
                     "pressure_emulator_bar",
                     "a1_voltage_v",
                     "flow_emulator_l_min",
+                    "pressure_state",
+                    "flow_state",
                     "gpio24_raw_level",
                     "estop_active",
+                    "process_healthy",
                     "permit_requested",
                     "trip_latched",
                     "gpio23_command_high",
+                    "guardrail_reason",
                     "event",
                 ]
             )
@@ -111,7 +118,39 @@ def main() -> int:
                 # Read the electrical GPIO level. DigitalInputDevice.value is
                 # inverted by gpiozero when pull_up=True.
                 raw_high = bool(estop.pin.state)
-                observed = interlock.observe(raw_high)
+                captured_at = datetime.now(timezone.utc).isoformat()
+                a0 = adc.read_voltage(0)
+                a1 = adc.read_voltage(1)
+                pressure = scale(a0, channels[0])
+                flow = scale(a1, channels[1])
+                samples = []
+                for adc_channel, value, voltage in ((0, pressure, a0), (1, flow, a1)):
+                    channel = channels[adc_channel]
+                    quality = (
+                        "good"
+                        if float(channel["valid_min"]) <= value <= float(channel["valid_max"])
+                        else "out_of_range"
+                    )
+                    samples.append(
+                        Sample(
+                            channel_id=str(channel["channel_id"]),
+                            value=value,
+                            unit=str(channel["unit"]),
+                            raw_value=voltage,
+                            quality=quality,
+                            captured_at=captured_at,
+                        )
+                    )
+                observed = interlock.observe(
+                    RigSnapshot(
+                        rig_id=rig_config.rig_id,
+                        config_hash=rig_config.config_hash,
+                        emergency_stop_active=raw_high,
+                        output_safe=not bool(output.value),
+                        samples=tuple(samples),
+                        captured_at=captured_at,
+                    )
+                )
                 if observed.event:
                     pending_event = observed.event
                     print(f"INTERLOCK_EVENT {observed.event}", flush=True)
@@ -146,8 +185,9 @@ def main() -> int:
                     output.off()
 
                 elapsed = time.monotonic() - started
-                a0 = adc.read_voltage(0)
-                a1 = adc.read_voltage(1)
+                channel_states = {
+                    str(item["channel_id"]): str(item["state"]) for item in interlock.channels
+                }
                 writer.writerow(
                     [
                         sample_index,
@@ -155,14 +195,18 @@ def main() -> int:
                         f"{elapsed:.6f}",
                         phase,
                         f"{a0:.6f}",
-                        f"{scale(a0, channels[0]):.5f}",
+                        f"{pressure:.5f}",
                         f"{a1:.6f}",
-                        f"{scale(a1, channels[1]):.5f}",
+                        f"{flow:.5f}",
+                        channel_states.get(str(channels[0]["channel_id"]), "missing"),
+                        channel_states.get(str(channels[1]["channel_id"]), "missing"),
                         "HIGH" if raw_high else "LOW",
                         str(raw_high).lower(),
+                        str(interlock.process_healthy).lower(),
                         str(interlock.permit_requested).lower(),
                         str(interlock.trip_latched).lower(),
                         str(bool(output.value)).lower(),
+                        interlock.reason,
                         pending_event,
                     ]
                 )
